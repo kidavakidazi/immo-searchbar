@@ -1,0 +1,693 @@
+/* ==========================================
+   CSS VARIABLES
+   ========================================== */
+:root {
+  /* Brand Colors */
+  --as-color-brand-primary: #2563eb;
+  --as-color-brand-primary-hover: #1d4ed8;
+  --as-color-brand-light: #cce9ff;
+  /* Text Colors */
+  --as-color-text-primary: #1a1a1a;
+  --as-color-text-secondary: #6b7280;
+  --as-color-text-tertiary: #9ca3af;
+  --as-color-text-inverse: #ffffff;
+  /* Background Colors */
+  --as-color-bg-primary: #ffffff;
+  --as-color-bg-secondary: #f9fafb;
+  --as-color-bg-tertiary: #f3f4f6;
+  /* Border Colors */
+  --as-color-border: #e5e7eb;
+  --as-color-border-focus: #2563eb;
+  /* Spacing System */
+  --as-spacing-xs: 0.5rem;
+  --as-spacing-sm: 0.75rem;
+  --as-spacing-md: 1rem;
+  --as-spacing-lg: 1.5rem;
+  --as-spacing-xl: 2rem;
+  /* Border Radius */
+  --as-radius-sm: 0.375rem;
+  --as-radius-md: 0.5rem;
+  --as-radius-lg: 0.75rem;
+  --as-radius-xl: 1rem;
+  /* Shadows */
+  --as-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --as-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --as-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --as-shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  /* Transitions */
+  --as-transition-fast: 150ms ease-in-out;
+  --as-transition-base: 200ms ease-in-out;
+  /* Field Height */
+  --as-field-height: 52px;
+  /* Glassmorphism */
+  --as-glass-bg: rgba(180, 180, 180, 0.25);
+  --as-glass-bg-focus: rgba(255, 255, 255, 1);
+  --as-glass-blur: 20px;
+  --as-glass-border: rgba(255, 255, 255, 0.3);
+  --as-transition-glass: background-color 0.4s cubic-bezier(0.86, 0, 0.07, 1),
+                         border-color 0.4s cubic-bezier(0.86, 0, 0.07, 1),
+                         box-shadow 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+  --as-transition-glass-opacity: opacity 0.1s ease-in-out;
+  /* Switcher */
+  --as-transition-switcher: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--as-color-bg-secondary);
+}
+
+/* ==========================================
+   BASE STYLES
+   ========================================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================
+   HERO SECTION WITH BACKGROUND
+   ========================================== */
+.apartment-search-hero {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  background-image: url("images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+.apartment-search-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.7), rgba(30, 64, 175, 0.7));
+  z-index: 1;
+}
+.apartment-search-hero__content {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+
+/* Overlay for better text readability */
+.apartment-search-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 1;
+}
+
+.apartment-search-hero__container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ==========================================
+   APARTMENT SEARCH COMPONENT
+   ========================================== */
+.apartment-search {
+  width: 100%;
+}
+
+.apartment-search__title {
+  margin: 0 0 var(--as-spacing-lg) 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--as-color-text-inverse);
+  text-align: left;
+}
+
+.apartment-search__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--as-spacing-md);
+}
+
+/* ==========================================
+   SWITCHER COMPONENT
+   ========================================== */
+.apartment-search__switcher {
+  display: inline-flex;
+  position: relative;
+  background: var(--as-glass-bg);
+  backdrop-filter: blur(var(--as-glass-blur));
+  -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
+  border: 1px solid var(--as-glass-border);
+  border-radius: var(--as-radius-lg);
+  padding: 4px;
+  gap: 4px;
+  align-self: flex-start;
+  height: var(--as-field-height);
+}
+
+/* Sliding background indicator */
+.apartment-search__switcher-indicator {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: var(--switcher-indicator-width, 50%);
+  background: var(--as-color-bg-primary);
+  border-radius: calc(var(--as-radius-lg) - 2px);
+  box-shadow: var(--as-shadow-sm);
+  transition: transform var(--as-transition-switcher), width var(--as-transition-switcher);
+  transform: translateX(var(--switcher-indicator-offset, 0));
+  z-index: 0;
+}
+
+.apartment-search__switcher-button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--as-spacing-lg);
+  border: none;
+  background: transparent;
+  color: var(--as-color-text-inverse);
+  border-radius: calc(var(--as-radius-lg) - 2px);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--as-transition-switcher);
+  font-size: 1rem;
+  min-width: 80px;
+  font-family: inherit;
+}
+
+.apartment-search__switcher-button:hover:not(.apartment-search__switcher-button--active) {
+  color: var(--as-color-text-primary);
+}
+
+.apartment-search__switcher-button--active {
+  color: var(--as-color-text-primary);
+}
+
+/* ==========================================
+   INPUT CONTAINER
+   ========================================== */
+.apartment-search__inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--as-spacing-sm);
+}
+
+.apartment-search__input-group {
+  position: relative;
+  width: 100%;
+}
+
+.apartment-search__input-group--grow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 220px;
+  width: max-content;
+}
+
+.apartment-search__input-icon {
+  position: absolute;
+  left: var(--as-spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  z-index: 1;
+  transition: color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.apartment-search__input-dropdown-icon {
+  position: absolute;
+  right: calc(var(--as-spacing-xs));
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.75rem;
+  height: 1.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  transition: transform var(--as-transition-base), color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.apartment-search__input-group--grow.dropdown-open .apartment-search__input-dropdown-icon {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Icon color changes on hover - using parent container */
+.apartment-search__input-group:hover .apartment-search__input-icon,
+.apartment-search__input-group--grow:hover .apartment-search__input-icon,
+.apartment-search__input-group--grow:hover .apartment-search__input-dropdown-icon {
+  color: var(--as-color-text-inverse);
+}
+
+/* Icon color changes on focus - using :focus-within on parent */
+.apartment-search__input-group:focus-within .apartment-search__input-icon,
+.apartment-search__input-group--grow:focus-within .apartment-search__input-icon,
+.apartment-search__input-group--grow:focus-within .apartment-search__input-dropdown-icon {
+  color: var(--as-color-text-secondary);
+}
+
+/* ==========================================
+   SELECT DROPDOWN
+   ========================================== */
+.apartment-search__select {
+  height: var(--as-field-height);
+  padding: calc(var(--as-spacing-md) * 0.75) calc(var(--as-spacing-md) * 3) calc(var(--as-spacing-md) * 0.75) calc(var(--as-spacing-md) * 3);
+  border: 1px solid var(--as-glass-border);
+  border-radius: var(--as-radius-lg);
+  font-size: 1rem;
+  color: var(--as-color-text-inverse);
+  background: var(--as-glass-bg);
+  backdrop-filter: blur(var(--as-glass-blur));
+  -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
+  cursor: pointer;
+  outline: none;
+  transition: var(--as-transition-glass), var(--as-transition-glass-opacity), color 0.1s ease-in-out;
+  appearance: none;
+  font-weight: 500;
+  font-family: inherit;
+  width: max-content;
+}
+
+.apartment-search__select:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--as-color-text-primary);
+}
+
+.apartment-search__select:focus {
+  background: var(--as-glass-bg-focus);
+  color: var(--as-color-text-primary);
+}
+
+/* Dropdown List Styling - Browser Native */
+.apartment-search__select option {
+  padding: var(--as-spacing-md);
+  background-color: var(--as-color-bg-primary);
+  color: var(--as-color-text-primary);
+  border-radius: 12px;
+  margin: 4px;
+  font-weight: 400;
+}
+
+/* Firefox specific styling */
+@-moz-document url-prefix() {
+  .apartment-search__select option {
+    padding: var(--as-spacing-md);
+  }
+  .apartment-search__select option:hover {
+    background-color: var(--as-color-brand-light) !important;
+    color: var(--as-color-text-inverse);
+    border-radius: 12px;
+  }
+}
+/* Webkit browsers (Chrome, Safari, Edge) */
+.apartment-search__select option:hover {
+  background: var(--as-color-brand-light);
+  color: var(--as-color-text-inverse);
+  border-radius: 12px;
+}
+
+.apartment-search__select option:checked {
+  background: linear-gradient(0deg, var(--as-color-brand-primary) 0%, var(--as-color-brand-primary) 100%);
+  color: var(--as-color-text-inverse);
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+/* ==========================================
+   CUSTOM DROPDOWN
+   ========================================== */
+.apartment-search__dropdown {
+  position: relative;
+  width: max-content;
+  min-width: 230px;
+}
+
+.apartment-search__dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--as-spacing-sm);
+  width: 100%;
+  height: var(--as-field-height);
+  padding: 0 var(--as-spacing-md);
+  padding-left: calc(var(--as-spacing-md) * 3);
+  border: 1px solid var(--as-glass-border);
+  border-radius: var(--as-radius-lg);
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--as-color-text-inverse);
+  background: var(--as-glass-bg);
+  backdrop-filter: blur(var(--as-glass-blur));
+  -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
+  cursor: pointer;
+  outline: none;
+  transition: var(--as-transition-glass), color 0.1s ease-in-out;
+  text-align: left;
+}
+
+.apartment-search__dropdown-trigger:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--as-color-text-primary);
+}
+
+.apartment-search__dropdown-trigger:focus,
+.apartment-search__dropdown--open .apartment-search__dropdown-trigger {
+  background: var(--as-glass-bg-focus);
+  color: var(--as-color-text-primary);
+}
+
+.apartment-search__dropdown-icon {
+  position: absolute;
+  left: var(--as-spacing-md);
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+  pointer-events: none;
+}
+
+.apartment-search__dropdown-trigger:focus .apartment-search__dropdown-icon,
+.apartment-search__dropdown--open .apartment-search__dropdown-icon {
+  color: var(--as-color-text-secondary);
+}
+
+.apartment-search__dropdown-value {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apartment-search__dropdown-arrow {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: transform var(--as-transition-switcher), color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+  flex-shrink: 0;
+}
+
+.apartment-search__dropdown-trigger:focus .apartment-search__dropdown-arrow,
+.apartment-search__dropdown--open .apartment-search__dropdown-arrow {
+  color: var(--as-color-text-secondary);
+}
+
+.apartment-search__dropdown--open .apartment-search__dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Dropdown List */
+.apartment-search__dropdown-list {
+  position: absolute;
+  top: calc(100% + var(--as-spacing-xs));
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  margin: 0;
+  padding: var(--as-spacing-xs);
+  list-style: none;
+  background: var(--as-color-bg-primary);
+  border-radius: 16px;
+  box-shadow: var(--as-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  z-index: 100;
+  will-change: opacity, transform;
+  contain: layout style;
+}
+
+/* Only apply transitions after initialization */
+.apartment-search__dropdown--ready .apartment-search__dropdown-list {
+  transition: opacity var(--as-transition-switcher), transform var(--as-transition-switcher), visibility var(--as-transition-switcher);
+}
+
+.apartment-search__dropdown--open .apartment-search__dropdown-list {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Dropdown Option */
+.apartment-search__dropdown-option {
+  display: flex;
+  align-items: center;
+  gap: var(--as-spacing-sm);
+  padding: var(--as-spacing-sm) var(--as-spacing-md);
+  padding-left: calc(var(--as-spacing-md) - var(--as-spacing-xs));
+  margin-bottom: 4px;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: var(--as-color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--as-transition-switcher), color var(--as-transition-switcher);
+}
+
+.apartment-search__dropdown-option:last-child {
+  margin-bottom: 0;
+}
+
+.apartment-search__dropdown-option:hover,
+.apartment-search__dropdown-option--focused,
+.apartment-search__dropdown-option--selected {
+  background: var(--as-color-brand-primary);
+  color: var(--as-color-text-inverse);
+}
+
+.apartment-search__dropdown-option--selected {
+  font-weight: 600;
+}
+
+.apartment-search__dropdown-option-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   TEXT INPUT
+   ========================================== */
+.apartment-search__input {
+  width: 100%;
+  height: var(--as-field-height);
+  padding: var(--as-spacing-md) var(--as-spacing-md) var(--as-spacing-md) calc(var(--as-spacing-md) * 3);
+  border: 1px solid var(--as-glass-border);
+  border-radius: var(--as-radius-lg);
+  font-size: 1rem;
+  color: var(--as-color-text-inverse);
+  background: var(--as-glass-bg);
+  backdrop-filter: blur(var(--as-glass-blur));
+  -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
+  outline: none;
+  transition: var(--as-transition-glass), var(--as-transition-glass-opacity), color 0.1s ease-in-out;
+  font-family: inherit;
+}
+
+.apartment-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.apartment-search__input:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.apartment-search__input:focus {
+  background: var(--as-glass-bg-focus);
+  color: var(--as-color-text-primary);
+}
+
+.apartment-search__input:focus::placeholder {
+  color: var(--as-color-text-tertiary);
+}
+
+/* ==========================================
+   SEARCH BUTTON
+   ========================================== */
+.apartment-search__search-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--as-spacing-xs);
+  height: var(--as-field-height);
+  padding: 0 var(--as-spacing-xl);
+  border: none;
+  background: var(--as-color-brand-primary);
+  color: var(--as-color-text-inverse);
+  border-radius: var(--as-radius-lg);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--as-transition-base);
+  box-shadow: var(--as-shadow-sm);
+  font-family: inherit;
+}
+
+.apartment-search__search-button:hover {
+  background: var(--as-color-brand-primary-hover);
+  box-shadow: var(--as-shadow-md);
+  transform: translateY(-1px);
+}
+
+.apartment-search__search-button:active {
+  transform: translateY(0);
+}
+
+.apartment-search__search-icon {
+  flex-shrink: 0;
+}
+
+.apartment-search__search-text {
+  font-size: 1rem;
+}
+
+/* ==========================================
+   ERROR MESSAGE
+   ========================================== */
+.apartment-search__error {
+  display: none;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: var(--as-spacing-xs);
+  padding: var(--as-spacing-sm);
+  background-color: #fee2e2;
+  border-radius: var(--as-radius-sm);
+  border-left: 3px solid #dc2626;
+}
+
+/* ==========================================
+   ACCESSIBILITY
+   ========================================== */
+.apartment-search__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN - TABLET & DESKTOP
+   ========================================== */
+@media (min-width: 768px) {
+  .apartment-search__title {
+    font-size: 2rem;
+    margin-bottom: var(--as-spacing-xl);
+  }
+  .apartment-search__form {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--as-spacing-md);
+  }
+  .apartment-search__switcher {
+    flex-shrink: 0;
+  }
+  .apartment-search__inputs {
+    flex: 1;
+    flex-direction: row;
+    align-items: stretch;
+    gap: var(--as-spacing-sm);
+  }
+  .apartment-search__search-button {
+    flex-shrink: 0;
+    padding: 0 var(--as-spacing-xl);
+  }
+}
+/* ==========================================
+   RESPONSIVE DESIGN - DESKTOP OPTIMIZATION
+   ========================================== */
+@media (min-width: 1024px) {
+  .apartment-search-hero {
+    min-height: 400px;
+  }
+  .apartment-search__title {
+    font-size: 2.5rem;
+  }
+}
+/* ==========================================
+   RESPONSIVE DESIGN - LARGE DESKTOP
+   ========================================== */
+@media (min-width: 1440px) {
+  .apartment-search-hero {
+    min-height: 550px;
+    background-position: center 40%;
+  }
+}
+/* ==========================================
+   RESPONSIVE DESIGN - MOBILE LANDSCAPE
+   ========================================== */
+@media (max-width: 767px) and (orientation: landscape) {
+  .apartment-search-hero {
+    min-height: 350px;
+  }
+  .apartment-search__title {
+    font-size: 1.25rem;
+    margin-bottom: var(--as-spacing-md);
+  }
+}
+/* ==========================================
+   ACCESSIBILITY - REDUCED MOTION
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  .apartment-search__switcher-button,
+  .apartment-search__select,
+  .apartment-search__input,
+  .apartment-search__search-button,
+  .apartment-search__input-icon,
+  .apartment-search__input-dropdown-icon {
+    transition: none;
+  }
+  .apartment-search__search-button:hover {
+    transform: none;
+  }
+}
+/* ==========================================
+   HIGH CONTRAST MODE
+   ========================================== */
+@media (prefers-contrast: more) {
+  .apartment-search__select,
+  .apartment-search__input {
+    background: var(--as-color-bg-primary);
+    color: var(--as-color-text-primary);
+    border: 3px solid var(--as-color-text-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none; /* Safari < 15.4 fallback */
+  }
+  .apartment-search__input::placeholder {
+    color: var(--as-color-text-secondary);
+  }
+  .apartment-search__input-icon,
+  .apartment-search__input-dropdown-icon {
+    color: var(--as-color-text-primary);
+  }
+  .apartment-search__switcher {
+    background: var(--as-color-bg-primary);
+    border: 2px solid var(--as-color-text-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none; /* Safari < 15.4 fallback */
+  }
+  .apartment-search__switcher-button {
+    color: var(--as-color-text-primary);
+  }
+  .apartment-search__switcher-button--active {
+    background: var(--as-color-brand-primary);
+    color: var(--as-color-text-inverse);
+  }
+}
+
+/*# sourceMappingURL=finder-wohnen.css.map */

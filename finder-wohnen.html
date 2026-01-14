@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apartment Search</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="finder-wohnen.css">
+</head>
+<body>
+<!-- Hero Section with Background Image -->
+<section class="apartment-search-hero">
+    <div class="apartment-search-hero__container">
+        <div class="apartment-search">
+            <h1 class="apartment-search__title">Finden Sie Ihre Traumimmobilie</h1>
+
+            <form class="apartment-search__form" id="searchForm">
+                <!-- Transaction Type Switcher -->
+                <div class="apartment-search__switcher" id="switcher">
+                    <span class="apartment-search__switcher-indicator" id="switcherIndicator"></span>
+                    <button
+                            type="button"
+                            class="apartment-search__switcher-button apartment-search__switcher-button--active"
+                            data-value="mieten"
+                    >
+                        Mieten
+                    </button>
+                    <button
+                            type="button"
+                            class="apartment-search__switcher-button"
+                            data-value="kaufen"
+                    >
+                        Kaufen
+                    </button>
+                    <input type="hidden" name="transactionType" id="transactionType" value="mieten">
+                </div>
+
+                <!-- Input Fields -->
+                <div class="apartment-search__inputs">
+                    <!-- Property Type Dropdown -->
+                    <div class="apartment-search__dropdown" id="propertyTypeDropdown">
+                        <button
+                                type="button"
+                                class="apartment-search__dropdown-trigger"
+                                id="propertyTypeTrigger"
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                aria-labelledby="propertyTypeLabel"
+                        >
+                            <svg class="apartment-search__dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="apartment-search__dropdown-value" id="propertyTypeValue">Wohnung</span>
+                            <svg class="apartment-search__dropdown-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                            </svg>
+                        </button>
+                        <span id="propertyTypeLabel" class="apartment-search__sr-only">Immobilientyp</span>
+                        <ul
+                                class="apartment-search__dropdown-list"
+                                id="propertyTypeList"
+                                role="listbox"
+                                aria-labelledby="propertyTypeLabel"
+                                tabindex="-1"
+                        >
+                            <!-- Options populated dynamically -->
+                        </ul>
+                        <input type="hidden" name="propertyType" id="propertyType" value="wohnung">
+                    </div>
+
+                    <!-- Zipcode Input -->
+                    <div class="apartment-search__input-group">
+                        <svg class="apartment-search__input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <label for="zipCode" class="apartment-search__sr-only">Postleitzahl</label>
+                        <input
+                                type="text"
+                                id="zipCode"
+                                name="zipCode"
+                                class="apartment-search__input"
+                                placeholder="PLZ eingeben"
+                                inputmode="numeric"
+                                autocomplete="postal-code"
+                                aria-label="Postleitzahl"
+                        >
+                    </div>
+
+                    <!-- Search Button -->
+                    <button type="submit" class="apartment-search__search-button">
+                        <svg class="apartment-search__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="apartment-search__search-text">Suchen</span>
+                    </button>
+                </div>
+
+                <!-- Error Message -->
+                <div id="formError" class="apartment-search__error" role="alert" aria-live="polite"></div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+  // Property type options for rent and buy with icons
+  const propertyOptions = {
+    mieten: [
+      { value: 'wohnung', label: 'Wohnung', icon: '<rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+      { value: 'haus', label: 'Haus', icon: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'waz', label: 'Wohnen auf Zeit', icon: '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'wg', label: 'WG Zimmer', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" fill="none"/><path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'freizeit', label: 'Ferienimmobilie', icon: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="14" r="2" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'garage_stellplatz', label: 'Garage/Stellplatz', icon: '<rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'grundstueck', label: 'Grundstück', icon: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'sonstiges', label: 'Sonstiges', icon: '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>' }
+    ],
+    kaufen: [
+      { value: 'haus', label: 'Haus', icon: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'wohnung', label: 'Wohnung', icon: '<rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+      { value: 'grundstueck', label: 'Grundstück', icon: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'freizeit', label: 'Ferienimmobilie', icon: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="14" r="2" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'renditeobjekt', label: 'Renditeobjekt', icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'garage_stellplatz', label: 'Garage/Stellplatz', icon: '<rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" fill="none"/>' },
+      { value: 'sonstiges', label: 'Sonstiges', icon: '<circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/>' }
+    ]
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Switcher elements
+    const switcher = document.getElementById('switcher');
+    const switcherIndicator = document.getElementById('switcherIndicator');
+    const switcherButtons = document.querySelectorAll('.apartment-search__switcher-button');
+    const transactionTypeInput = document.getElementById('transactionType');
+
+    // Dropdown elements
+    const dropdown = document.getElementById('propertyTypeDropdown');
+    const dropdownTrigger = document.getElementById('propertyTypeTrigger');
+    const dropdownList = document.getElementById('propertyTypeList');
+    const dropdownValue = document.getElementById('propertyTypeValue');
+    const propertyTypeInput = document.getElementById('propertyType');
+
+    // Other form elements
+    const zipCodeInput = document.getElementById('zipCode');
+    const form = document.getElementById('searchForm');
+    const errorDiv = document.getElementById('formError');
+
+    let focusedIndex = -1;
+    let currentTransactionType = 'mieten';
+
+    // ========================================
+    // SWITCHER FUNCTIONALITY
+    // ========================================
+
+    function updateIndicator(activeButton) {
+      const switcherRect = switcher.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+      const offset = buttonRect.left - switcherRect.left - 4;
+
+      switcher.style.setProperty('--switcher-indicator-width', `${buttonRect.width}px`);
+      switcher.style.setProperty('--switcher-indicator-offset', `${offset}px`);
+    }
+
+    const initialActiveButton = document.querySelector('.apartment-search__switcher-button--active');
+    if (initialActiveButton) {
+      updateIndicator(initialActiveButton);
+    }
+
+    switcherButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        switcherButtons.forEach(btn => {
+          btn.classList.remove('apartment-search__switcher-button--active');
+        });
+        this.classList.add('apartment-search__switcher-button--active');
+        updateIndicator(this);
+
+        currentTransactionType = this.getAttribute('data-value');
+        transactionTypeInput.value = currentTransactionType;
+
+        // Update dropdown options
+        populateDropdownOptions(currentTransactionType);
+      });
+    });
+
+    window.addEventListener('resize', () => {
+      const activeButton = document.querySelector('.apartment-search__switcher-button--active');
+      if (activeButton) {
+        updateIndicator(activeButton);
+      }
+    });
+
+    // ========================================
+    // CUSTOM DROPDOWN FUNCTIONALITY
+    // ========================================
+
+    function populateDropdownOptions(transactionType) {
+      const options = propertyOptions[transactionType];
+      const fragment = document.createDocumentFragment();
+
+      options.forEach((option, index) => {
+        const li = document.createElement('li');
+        li.className = 'apartment-search__dropdown-option';
+        if (index === 0) {
+          li.className += ' apartment-search__dropdown-option--selected';
+        }
+        li.setAttribute('role', 'option');
+        li.setAttribute('data-value', option.value);
+        li.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+
+        li.innerHTML = `
+          <svg class="apartment-search__dropdown-option-icon" viewBox="0 0 24 24" aria-hidden="true">
+            ${option.icon}
+          </svg>
+          <span>${option.label}</span>
+        `;
+
+        li.addEventListener('click', () => selectOption(option, li));
+        fragment.appendChild(li);
+      });
+
+      // Single DOM update
+      dropdownList.innerHTML = '';
+      dropdownList.appendChild(fragment);
+
+      // Select first option
+      const firstOption = options[0];
+      dropdownValue.textContent = firstOption.label;
+      propertyTypeInput.value = firstOption.value;
+    }
+
+    function selectOption(option, optionElement) {
+      // Update value display
+      dropdownValue.textContent = option.label;
+      propertyTypeInput.value = option.value;
+
+      // Update selected state
+      const allOptions = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      allOptions.forEach(opt => {
+        opt.classList.remove('apartment-search__dropdown-option--selected');
+        opt.setAttribute('aria-selected', 'false');
+      });
+      optionElement.classList.add('apartment-search__dropdown-option--selected');
+      optionElement.setAttribute('aria-selected', 'true');
+
+      // Close dropdown
+      closeDropdown();
+    }
+
+    function openDropdown() {
+      dropdown.classList.add('apartment-search__dropdown--open');
+      dropdownTrigger.setAttribute('aria-expanded', 'true');
+      focusedIndex = -1;
+    }
+
+    function closeDropdown() {
+      dropdown.classList.remove('apartment-search__dropdown--open');
+      dropdownTrigger.setAttribute('aria-expanded', 'false');
+      focusedIndex = -1;
+      clearFocusedOption();
+    }
+
+    function toggleDropdown() {
+      if (dropdown.classList.contains('apartment-search__dropdown--open')) {
+        closeDropdown();
+      } else {
+        openDropdown();
+      }
+    }
+
+    function clearFocusedOption() {
+      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      options.forEach(opt => opt.classList.remove('apartment-search__dropdown-option--focused'));
+    }
+
+    function focusOption(index) {
+      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      if (options.length === 0) return;
+
+      clearFocusedOption();
+
+      if (index < 0) index = options.length - 1;
+      if (index >= options.length) index = 0;
+
+      focusedIndex = index;
+      options[focusedIndex].classList.add('apartment-search__dropdown-option--focused');
+    }
+
+    // Event listeners
+    dropdownTrigger.addEventListener('click', toggleDropdown);
+
+    dropdownTrigger.addEventListener('keydown', (e) => {
+      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+
+      switch (e.key) {
+        case 'Enter':
+        case ' ':
+          e.preventDefault();
+          if (dropdown.classList.contains('apartment-search__dropdown--open') && focusedIndex >= 0) {
+            options[focusedIndex].click();
+          } else {
+            toggleDropdown();
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          if (!dropdown.classList.contains('apartment-search__dropdown--open')) {
+            openDropdown();
+          }
+          focusOption(focusedIndex + 1);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          if (!dropdown.classList.contains('apartment-search__dropdown--open')) {
+            openDropdown();
+          }
+          focusOption(focusedIndex - 1);
+          break;
+        case 'Escape':
+          closeDropdown();
+          dropdownTrigger.focus();
+          break;
+        case 'Tab':
+          closeDropdown();
+          break;
+      }
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        closeDropdown();
+      }
+    });
+
+    // Initialize dropdown
+    populateDropdownOptions('mieten');
+
+    // Enable transitions after initial render (prevents animation on page load)
+    requestAnimationFrame(() => {
+      dropdown.classList.add('apartment-search__dropdown--ready');
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Clear previous error
+      errorDiv.textContent = '';
+      errorDiv.style.display = 'none';
+
+      // Validate zipcode
+      if (!zipCodeInput.value.trim()) {
+        errorDiv.textContent = 'Bitte geben Sie eine Postleitzahl ein.';
+        errorDiv.style.display = 'block';
+        zipCodeInput.focus();
+        return;
+      }
+
+      // Log form data (in production, you would submit to server)
+      console.log('Form submitted:', {
+        transactionType: transactionTypeInput.value,
+        propertyType: propertyTypeInput.value,
+        propertyText: dropdownValue.textContent,
+        zipCode: zipCodeInput.value
+      });
+
+      // Success message (optional)
+      errorDiv.textContent = 'Suche wird durchgeführt...';
+      errorDiv.style.color = 'var(--as-color-brand-primary)';
+      errorDiv.style.display = 'block';
+    });
+  });
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@
 <section class="apartment-search-hero">
     <div class="apartment-search-hero__container">
         <div class="apartment-search">
-            <h1 class="apartment-search__title">Finden Sie Ihre Traumimmobilie</h1>
+            <h1 class="apartment-search__title">Ihr neues Zuhause finden</h1>
 
             <form class="apartment-search__form" id="searchForm">
                 <!-- Transaction Type Switcher -->
@@ -162,15 +162,25 @@
       switcher.style.setProperty('--switcher-indicator-offset', `${offset}px`);
     }
 
-    const initialActiveButton = document.querySelector('.apartment-search__switcher-button--active');
-    if (initialActiveButton) {
-      updateIndicator(initialActiveButton);
+    // Initialize switcher after fonts are loaded to prevent layout shift
+    function initSwitcher() {
+      const initialActiveButton = document.querySelector('.apartment-search__switcher-button--active');
+      if (initialActiveButton) {
+        updateIndicator(initialActiveButton);
+      }
+
+      // Enable transitions after initial render (prevents animation on page load)
+      requestAnimationFrame(() => {
+        switcher.classList.add('apartment-search__switcher--ready');
+      });
     }
 
-    // Enable transitions after initial render (prevents animation on page load)
-    requestAnimationFrame(() => {
-      switcher.classList.add('apartment-search__switcher--ready');
-    });
+    // Wait for fonts to load before positioning indicator
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(initSwitcher);
+    } else {
+      initSwitcher();
+    }
 
     switcherButtons.forEach(button => {
       button.addEventListener('click', function() {
@@ -417,6 +427,22 @@
     zipCodeInput.addEventListener('focus', function() {
       isTypingStopped = true;
       zipCodeInput.setAttribute('placeholder', '');
+    });
+
+    // Restart typing animation on blur if input is empty
+    zipCodeInput.addEventListener('blur', function() {
+      if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
+        zipCodeInput.value = '';
+        zipCodeInput.classList.remove('apartment-search__input--error');
+        if (errorTypingInterval) {
+          clearInterval(errorTypingInterval);
+          errorTypingInterval = null;
+        }
+        isTypingStopped = false;
+        charIndex = 0;
+        isDeleting = false;
+        updatePlaceholder();
+      }
     });
 
     // Start the typing animation

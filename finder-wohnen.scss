@@ -97,18 +97,23 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
+  filter: saturate(0.9) contrast(0.95);
 
+  /* Overlay for better text readability */
   &::before {
-    content: "";
+    content: '';
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
     background: linear-gradient(
-                    135deg,
-                    rgba(37, 99, 235, 0.7),
-                    rgba(30, 64, 175, 0.7)
+                    to bottom,
+                    rgba(0, 0, 0, 0.3) 0%,
+                    rgba(0, 0, 0, 0.4) 50%,
+                    rgba(0, 0, 0, 0.5) 100%
     );
-
     z-index: 1;
   }
 
@@ -117,23 +122,6 @@ body {
     z-index: 2;
     color: white;
   }
-}
-
-/* Overlay for better text readability */
-.apartment-search-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-                  to bottom,
-                  rgba(0, 0, 0, 0.3) 0%,
-                  rgba(0, 0, 0, 0.4) 50%,
-                  rgba(0, 0, 0, 0.5) 100%
-  );
-  z-index: 1;
 }
 
 .apartment-search-hero__container {
@@ -164,8 +152,8 @@ body {
 
 .apartment-search__title {
   margin: 0 0 var(--as-spacing-lg) 0;
-  font-size: clamp(1.5rem, 1rem + 4vw, 4.5rem);
-  font-weight: 700;
+  font-size: clamp(2.25rem, 3.5vw, 3rem);
+  font-weight: 600;
   color: var(--as-color-text-inverse);
 }
 
@@ -648,6 +636,20 @@ body {
 }
 
 /* ==========================================
+   RESPONSIVE DESIGN - SMALL MOBILE (up to 480px)
+   ========================================== */
+
+@media (max-width: 480px) {
+  .apartment-search__switcher {
+    width: 100%;
+  }
+
+  .apartment-search__switcher-button {
+    flex: 1;
+  }
+}
+
+/* ==========================================
    RESPONSIVE DESIGN - TABLET (768px+)
    ========================================== */
 
@@ -705,7 +707,7 @@ body {
 
 @media (min-width: 1440px) {
   .apartment-search-hero {
-    min-height: 550px;
+    min-height: 400px;
     background-position: center 40%;
   }
 }

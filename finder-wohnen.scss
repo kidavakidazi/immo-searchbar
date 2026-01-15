@@ -3,53 +3,89 @@
    ========================================== */
 
 :root {
-  /* Brand Colors */
+  /* ==========================================
+     BRAND COLORS
+     ========================================== */
   --as-color-brand-primary: #2563eb;
   --as-color-brand-primary-hover: #1d4ed8;
   --as-color-brand-light: #cce9ff;
 
-  /* Text Colors */
+  /* ==========================================
+     TEXT COLORS
+     ========================================== */
   --as-color-text-primary: #1a1a1a;
   --as-color-text-secondary: #6b7280;
   --as-color-text-tertiary: #9ca3af;
   --as-color-text-inverse: #ffffff;
+  --as-color-text-error: #dc2626;
 
-  /* Background Colors */
+  /* ==========================================
+     BACKGROUND COLORS
+     ========================================== */
   --as-color-bg-primary: #ffffff;
   --as-color-bg-secondary: #f9fafb;
   --as-color-bg-tertiary: #f3f4f6;
 
-  /* Border Colors */
+  /* ==========================================
+     BORDER COLORS
+     ========================================== */
   --as-color-border: #e5e7eb;
   --as-color-border-focus: #2563eb;
 
-  /* Spacing System */
+  /* ==========================================
+     SPACING SYSTEM
+     8px base unit: 2xs=4px, xs=8px, sm=12px, md=16px, lg=24px, xl=32px
+     ========================================== */
+  --as-spacing-2xs: 0.25rem;
   --as-spacing-xs: 0.5rem;
   --as-spacing-sm: 0.75rem;
   --as-spacing-md: 1rem;
   --as-spacing-lg: 1.5rem;
   --as-spacing-xl: 2rem;
 
-  /* Border Radius */
-  --as-radius-sm: 0.375rem;
-  --as-radius-md: 0.5rem;
-  --as-radius-lg: 0.75rem;
-  --as-radius-xl: 1rem;
+  /* ==========================================
+     TYPOGRAPHY SCALE
+     Based on 1rem (16px) base with 1.25 ratio
+     ========================================== */
+  --as-font-size-sm: 0.875rem;   /* 14px */
+  --as-font-size-base: 1rem;     /* 16px */
+  --as-font-size-lg: 1.125rem;   /* 18px */
+  --as-font-size-xl: 1.25rem;    /* 20px */
+  --as-font-size-2xl: 1.5rem;    /* 24px */
+  --as-font-size-3xl: 2.25rem;   /* 36px */
 
-  /* Shadows */
+  /* ==========================================
+     BORDER RADIUS
+     ========================================== */
+  --as-radius-sm: 0.375rem;  /* 6px */
+  --as-radius-md: 0.5rem;    /* 8px */
+  --as-radius-lg: 0.75rem;   /* 12px */
+  --as-radius-xl: 1rem;      /* 16px */
+
+  /* ==========================================
+     SHADOWS
+     ========================================== */
   --as-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --as-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --as-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --as-shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.2);
 
-  /* Transitions */
+  /* ==========================================
+     TRANSITIONS
+     ========================================== */
   --as-transition-fast: 150ms ease-in-out;
   --as-transition-base: 200ms ease-in-out;
+  --as-transition-switcher: 180ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Field Height */
+  /* ==========================================
+     FORM FIELDS
+     ========================================== */
   --as-field-height: 52px;
+  --as-touch-target-min: 44px; /* WCAG 2.1 minimum touch target */
 
-  /* Glassmorphism */
+  /* ==========================================
+     GLASSMORPHISM EFFECT
+     Semi-transparent backgrounds with blur for modern glass look
+     ========================================== */
   --as-glass-bg: rgba(180, 180, 180, 0.25);
   --as-glass-bg-focus: rgba(255, 255, 255, 1);
   --as-glass-blur: 20px;
@@ -59,8 +95,15 @@
                          box-shadow 0.4s cubic-bezier(0.86, 0, 0.07, 1);
   --as-transition-glass-opacity: opacity 0.1s ease-in-out;
 
-  /* Switcher */
-  --as-transition-switcher: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* ==========================================
+     BREAKPOINTS (reference only - CSS custom properties
+     cannot be used in media queries)
+     ========================================== */
+  /* --as-breakpoint-sm: 480px;   Small mobile max */
+  /* --as-breakpoint-md: 768px;   Tablet */
+  /* --as-breakpoint-lg: 1000px;  Desktop */
+  /* --as-breakpoint-xl: 1440px;  Large desktop */
+  /* --as-breakpoint-4k: 2560px;  4K displays */
 }
 
 body {
@@ -69,6 +112,8 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--as-color-bg-secondary);
+  /* Prevent horizontal scrolling on mobile */
+  overflow-x: hidden;
 }
 
 /* ==========================================
@@ -85,7 +130,7 @@ body {
    HERO SECTION WITH BACKGROUND
    ========================================== */
 
-.apartment-search-hero {
+.immo-search-hero {
   position: relative;
   width: 100%;
   min-height: 400px;
@@ -97,17 +142,14 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  filter: saturate(0.9) contrast(0.95);
+  /* Performance: contain isolates layout calculations */
+  contain: layout style;
 
   /* Overlay for better text readability */
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
+    inset: 0;
     background: linear-gradient(
                     to bottom,
                     rgba(0, 0, 0, 0.3) 0%,
@@ -124,7 +166,7 @@ body {
   }
 }
 
-.apartment-search-hero__container {
+.immo-search-hero__container {
   position: relative;
   z-index: 2;
   width: 100%;
@@ -135,7 +177,7 @@ body {
 
 /* Center container with calc margin on large screens */
 @media (min-width: 1000px) {
-  .apartment-search-hero__container {
+  .immo-search-hero__container {
     margin-left: calc(50% - 31.04rem);
     margin-right: calc(50% - 31.04rem);
     max-width: none;
@@ -146,28 +188,30 @@ body {
    APARTMENT SEARCH COMPONENT
    ========================================== */
 
-.apartment-search {
+.immo-search {
   width: 100%;
 }
 
-.apartment-search__title {
+.immo-search__title {
   margin: 0 0 var(--as-spacing-lg) 0;
   font-size: clamp(2.25rem, 3.5vw, 3rem);
   font-weight: 600;
   color: var(--as-color-text-inverse);
 }
 
-.apartment-search__form {
+.immo-search__form {
   display: flex;
   flex-direction: column;
   gap: var(--as-spacing-md);
+  /* Performance: isolate layout calculations */
+  contain: layout style;
 }
 
 /* ==========================================
    SWITCHER COMPONENT
    ========================================== */
 
-.apartment-search__switcher {
+.immo-search__switcher {
   display: inline-flex;
   position: relative;
   background: var(--as-glass-bg);
@@ -175,19 +219,19 @@ body {
   -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
   border: 1px solid var(--as-glass-border);
   border-radius: var(--as-radius-lg);
-  padding: 4px;
-  gap: 4px;
+  padding: var(--as-spacing-2xs);
+  gap: var(--as-spacing-2xs);
   align-self: flex-start;
   height: var(--as-field-height);
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Sliding background indicator */
-.apartment-search__switcher-indicator {
+/* Sliding background indicator - positioned inside switcher padding */
+.immo-search__switcher-indicator {
   position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
+  top: var(--as-spacing-2xs);
+  bottom: var(--as-spacing-2xs);
+  left: var(--as-spacing-2xs);
   width: var(--switcher-indicator-width, 0);
   background: var(--as-color-bg-primary);
   border-radius: calc(var(--as-radius-lg) - 2px);
@@ -197,12 +241,12 @@ body {
 }
 
 /* Only apply transitions after initialization */
-.apartment-search__switcher--ready .apartment-search__switcher-indicator {
+.immo-search__switcher--ready .immo-search__switcher-indicator {
   transition: transform var(--as-transition-switcher),
               width var(--as-transition-switcher);
 }
 
-.apartment-search__switcher-button {
+.immo-search__switcher-button {
   position: relative;
   z-index: 1;
   display: flex;
@@ -222,11 +266,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.apartment-search__switcher-button:hover:not(.apartment-search__switcher-button--active) {
+.immo-search__switcher-button:hover:not(.immo-search__switcher-button--active) {
   color: var(--as-color-text-primary);
 }
 
-.apartment-search__switcher-button--active {
+.immo-search__switcher-button--active {
   color: var(--as-color-text-primary);
 }
 
@@ -234,27 +278,18 @@ body {
    INPUT CONTAINER
    ========================================== */
 
-.apartment-search__inputs {
+.immo-search__inputs {
   display: flex;
   flex-direction: column;
   gap: var(--as-spacing-md);
 }
 
-.apartment-search__input-group {
+.immo-search__input-group {
   position: relative;
   width: 100%;
 }
 
-.apartment-search__input-group--grow {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 220px;
-  width: max-content;
-}
-
-.apartment-search__input-icon {
+.immo-search__input-icon {
   position: absolute;
   left: var(--as-spacing-md);
   top: 50%;
@@ -265,123 +300,33 @@ body {
   transition: color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
 }
 
-.apartment-search__input-dropdown-icon {
-  position: absolute;
-  right: calc(var(--as-spacing-xs));
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.75rem;
-  height: 1.75rem;
-  color: rgba(255, 255, 255, 0.8);
-  pointer-events: none;
-  transition: transform var(--as-transition-base), color 0.4s cubic-bezier(0.86, 0, 0.07, 1);
-}
-
-.apartment-search__input-group--grow.dropdown-open .apartment-search__input-dropdown-icon {
-  transform: translateY(-50%) rotate(180deg);
-}
-
-/* Icon color changes on hover - using parent container */
-.apartment-search__input-group:hover .apartment-search__input-icon,
-.apartment-search__input-group--grow:hover .apartment-search__input-icon,
-.apartment-search__input-group--grow:hover .apartment-search__input-dropdown-icon {
+/* Icon color changes on hover */
+.immo-search__input-group:hover .immo-search__input-icon {
   color: var(--as-color-text-inverse);
 }
 
-/* Icon color changes on focus - using :focus-within on parent */
-.apartment-search__input-group:focus-within .apartment-search__input-icon,
-.apartment-search__input-group--grow:focus-within .apartment-search__input-icon,
-.apartment-search__input-group--grow:focus-within .apartment-search__input-dropdown-icon {
+/* Icon color changes on focus */
+.immo-search__input-group:focus-within .immo-search__input-icon {
   color: var(--as-color-text-secondary);
-}
-
-/* ==========================================
-   SELECT DROPDOWN
-   ========================================== */
-
-.apartment-search__select {
-  height: var(--as-field-height);
-  padding: calc(var(--as-spacing-md) * 0.75) calc(var(--as-spacing-md) * 3) calc(var(--as-spacing-md) * 0.75) calc(var(--as-spacing-md) * 3);
-  border: 1px solid var(--as-glass-border);
-  border-radius: var(--as-radius-lg);
-  font-size: 1rem;
-  color: var(--as-color-text-inverse);
-  background: var(--as-glass-bg);
-  backdrop-filter: blur(var(--as-glass-blur));
-  -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
-  cursor: pointer;
-  outline: none;
-  transition: var(--as-transition-glass), var(--as-transition-glass-opacity), color 0.1s ease-in-out;
-  appearance: none;
-  font-weight: 500;
-  font-family: inherit;
-  width: max-content;
-}
-
-.apartment-search__select:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  color: var(--as-color-text-primary);
-}
-
-.apartment-search__select:focus {
-  background: var(--as-glass-bg-focus);
-  color: var(--as-color-text-primary);
-}
-
-/* Dropdown List Styling - Browser Native */
-.apartment-search__select option {
-  padding: var(--as-spacing-md);
-  background-color: var(--as-color-bg-primary);
-  color: var(--as-color-text-primary);
-  border-radius: 12px;
-  margin: 4px;
-  font-weight: 400;
-}
-
-/* Firefox specific styling */
-@-moz-document url-prefix() {
-  .apartment-search__select option {
-    padding: var(--as-spacing-md);
-  }
-
-  .apartment-search__select option:hover {
-    background-color: var(--as-color-brand-light) !important;
-    color: var(--as-color-text-inverse);
-    border-radius: 12px;
-  }
-}
-
-/* Webkit browsers (Chrome, Safari, Edge) */
-.apartment-search__select option:hover {
-  background: var(--as-color-brand-light);
-  color: var(--as-color-text-inverse);
-  border-radius: 12px;
-}
-
-.apartment-search__select option:checked {
-  background: linear-gradient(0deg, var(--as-color-brand-primary) 0%, var(--as-color-brand-primary) 100%);
-  color: var(--as-color-text-inverse);
-  border-radius: 12px;
-  font-weight: 500;
 }
 
 /* ==========================================
    CUSTOM DROPDOWN
    ========================================== */
 
-.apartment-search__dropdown {
+.immo-search__dropdown {
   position: relative;
   width: 100%;
   min-width: 230px;
 }
 
 @media (min-width: 768px) {
-  .apartment-search__dropdown {
+  .immo-search__dropdown {
     width: max-content;
   }
 }
 
-.apartment-search__dropdown-trigger {
+.immo-search__dropdown-trigger {
   display: flex;
   align-items: center;
   gap: var(--as-spacing-sm);
@@ -400,22 +345,22 @@ body {
   -webkit-backdrop-filter: blur(var(--as-glass-blur)); /* Safari < 15.4 fallback */
   cursor: pointer;
   outline: none;
-  transition: var(--as-transition-glass), color 0.1s ease-in-out;
+  transition: var(--as-transition-glass), var(--as-transition-glass-opacity), color 0.1s ease-in-out;
   text-align: left;
 }
 
-.apartment-search__dropdown-trigger:hover {
+.immo-search__dropdown-trigger:hover {
   border-color: rgba(255, 255, 255, 0.5);
   color: var(--as-color-text-primary);
 }
 
-.apartment-search__dropdown-trigger:focus,
-.apartment-search__dropdown--open .apartment-search__dropdown-trigger {
+.immo-search__dropdown-trigger:focus,
+.immo-search__dropdown--open .immo-search__dropdown-trigger {
   background: var(--as-glass-bg-focus);
   color: var(--as-color-text-primary);
 }
 
-.apartment-search__dropdown-icon {
+.immo-search__dropdown-icon {
   position: absolute;
   left: var(--as-spacing-md);
   color: rgba(255, 255, 255, 0.8);
@@ -423,19 +368,19 @@ body {
   pointer-events: none;
 }
 
-.apartment-search__dropdown-trigger:focus .apartment-search__dropdown-icon,
-.apartment-search__dropdown--open .apartment-search__dropdown-icon {
+.immo-search__dropdown-trigger:focus .immo-search__dropdown-icon,
+.immo-search__dropdown--open .immo-search__dropdown-icon {
   color: var(--as-color-text-secondary);
 }
 
-.apartment-search__dropdown-value {
+.immo-search__dropdown-value {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.apartment-search__dropdown-arrow {
+.immo-search__dropdown-arrow {
   width: 1.5rem;
   height: 1.5rem;
   color: rgba(255, 255, 255, 0.8);
@@ -443,79 +388,83 @@ body {
   flex-shrink: 0;
 }
 
-.apartment-search__dropdown-trigger:focus .apartment-search__dropdown-arrow,
-.apartment-search__dropdown--open .apartment-search__dropdown-arrow {
+.immo-search__dropdown-trigger:focus .immo-search__dropdown-arrow,
+.immo-search__dropdown--open .immo-search__dropdown-arrow {
   color: var(--as-color-text-secondary);
 }
 
-.apartment-search__dropdown--open .apartment-search__dropdown-arrow {
+.immo-search__dropdown--open .immo-search__dropdown-arrow {
   transform: rotate(180deg);
 }
 
-/* Dropdown List */
-.apartment-search__dropdown-list {
+/* Dropdown List - Positioned below trigger with fade animation
+   Uses pointer-events instead of visibility for better first-paint performance.
+   The element stays in render tree, avoiding compositor setup delay on first open. */
+.immo-search__dropdown-list {
   position: absolute;
   top: calc(100% + var(--as-spacing-xs));
   left: 0;
   min-width: 100%;
   width: max-content;
+  /* Prevent overflow on small screens */
+  max-width: calc(100vw - var(--as-spacing-xl));
   margin: 0;
   padding: var(--as-spacing-xs);
   list-style: none;
   background: var(--as-color-bg-primary);
-  border-radius: 16px;
+  border-radius: var(--as-radius-xl);
   box-shadow: var(--as-shadow-lg);
   opacity: 0;
-  visibility: hidden;
+  pointer-events: none;
   transform: translateY(-8px);
   z-index: 100;
+  /* Performance: pre-promote to compositor layer */
   will-change: opacity, transform;
   contain: layout style;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--as-spacing-2xs);
 }
 
 /* Only apply transitions after initialization */
-.apartment-search__dropdown--ready .apartment-search__dropdown-list {
+.immo-search__dropdown--ready .immo-search__dropdown-list {
   transition: opacity var(--as-transition-switcher),
-              transform var(--as-transition-switcher),
-              visibility var(--as-transition-switcher);
+              transform var(--as-transition-switcher);
 }
 
-.apartment-search__dropdown--open .apartment-search__dropdown-list {
+.immo-search__dropdown--open .immo-search__dropdown-list {
   opacity: 1;
-  visibility: visible;
+  pointer-events: auto;
   transform: translateY(0);
 }
 
 /* Dropdown Option */
-.apartment-search__dropdown-option {
+.immo-search__dropdown-option {
   display: flex;
   align-items: center;
   gap: var(--as-spacing-sm);
   padding: var(--as-spacing-sm) var(--as-spacing-md);
   padding-left: calc(var(--as-spacing-md) - var(--as-spacing-xs));
-  border-radius: 12px;
-  font-size: 1rem;
+  border-radius: var(--as-radius-lg);
+  font-size: var(--as-font-size-base);
   color: var(--as-color-text-primary);
   cursor: pointer;
   transition: background-color var(--as-transition-switcher),
               color var(--as-transition-switcher);
 }
 
-.apartment-search__dropdown-option:hover,
-.apartment-search__dropdown-option--focused,
-.apartment-search__dropdown-option--selected {
+.immo-search__dropdown-option:hover,
+.immo-search__dropdown-option--focused,
+.immo-search__dropdown-option--selected {
   background: var(--as-color-brand-primary);
   color: var(--as-color-text-inverse);
 }
 
-.apartment-search__dropdown-option--selected {
+.immo-search__dropdown-option--selected {
   font-weight: 600;
 }
 
-.apartment-search__dropdown-option-icon {
+.immo-search__dropdown-option-icon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
@@ -525,7 +474,7 @@ body {
    TEXT INPUT
    ========================================== */
 
-.apartment-search__input {
+.immo-search__input {
   width: 100%;
   height: var(--as-field-height);
   padding: var(--as-spacing-md) var(--as-spacing-md) var(--as-spacing-md) calc(var(--as-spacing-md) * 3);
@@ -541,20 +490,20 @@ body {
   font-family: inherit;
 }
 
-.apartment-search__input::placeholder {
+.immo-search__input::placeholder {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.apartment-search__input:hover {
+.immo-search__input:hover {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-.apartment-search__input:focus {
+.immo-search__input:focus {
   background: var(--as-glass-bg-focus);
   color: var(--as-color-text-primary);
 }
 
-.apartment-search__input:focus::placeholder {
+.immo-search__input:focus::placeholder {
   color: var(--as-color-text-tertiary);
 }
 
@@ -562,7 +511,7 @@ body {
    SEARCH BUTTON
    ========================================== */
 
-.apartment-search__search-button {
+.immo-search__search-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -581,16 +530,15 @@ body {
   font-family: inherit;
 }
 
-.apartment-search__search-button:hover {
+.immo-search__search-button:hover {
   background: var(--as-color-brand-primary-hover);
 }
 
-
-.apartment-search__search-icon {
+.immo-search__search-icon {
   flex-shrink: 0;
 }
 
-.apartment-search__search-text {
+.immo-search__search-text {
   font-size: 1rem;
 }
 
@@ -598,19 +546,19 @@ body {
    INPUT ERROR STATE
    ========================================== */
 
-.apartment-search__input--error {
-  color: #dc2626;
+.immo-search__input--error {
+  color: var(--as-color-text-error);
 }
 
-.apartment-search__input--error:focus {
-  color: #dc2626;
+.immo-search__input--error:focus {
+  color: var(--as-color-text-error);
 }
 
 /* ==========================================
    ACCESSIBILITY
    ========================================== */
 
-.apartment-search__sr-only {
+.immo-search__sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -623,106 +571,109 @@ body {
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - MOBILE (default)
+   RESPONSIVE DESIGN - MOBILE FIRST APPROACH
+   Base styles (320px+) are defined above in component sections.
+   Media queries below progressively enhance for larger screens.
+
+   Breakpoints:
+   - Base: 320px+ (mobile, default)
+   - 481px+: Small tablet / large mobile
+   - 768px+: Tablet
+   - 1000px+: Desktop
+   - 1440px+: Large desktop
    ========================================== */
 
-/* Mobile: stack everything, center title and switcher */
-.apartment-search__title {
+/* Mobile base (320px+): Full-width switcher, centered, stacked layout */
+.immo-search__title {
   text-align: center;
 }
 
-.apartment-search__switcher {
+.immo-search__switcher {
   align-self: center;
+  width: 100%;
+}
+
+.immo-search__switcher-button {
+  flex: 1;
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - SMALL MOBILE (up to 480px)
+   481px+ : Large mobile / Small tablet
+   Switcher returns to auto width
    ========================================== */
-
-@media (max-width: 480px) {
-  .apartment-search__switcher {
-    width: 100%;
+@media (min-width: 481px) {
+  .immo-search__switcher {
+    width: auto;
   }
 
-  .apartment-search__switcher-button {
-    flex: 1;
+  .immo-search__switcher-button {
+    flex: none;
   }
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - TABLET (768px+)
+   768px+ : Tablet
+   Form inputs align horizontally
    ========================================== */
-
 @media (min-width: 768px) {
-  .apartment-search__title {
+  .immo-search__title {
     margin-bottom: var(--as-spacing-xl);
   }
 
-  /* Inputs in a row with search button */
-  .apartment-search__inputs {
+  .immo-search__inputs {
     flex-direction: row;
     align-items: stretch;
   }
 
-  .apartment-search__search-button {
+  .immo-search__search-button {
     flex-shrink: 0;
     padding: 0 var(--as-spacing-xl);
   }
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - DESKTOP (1000px+)
+   1000px+ : Desktop
+   Switcher and inputs on same row
    ========================================== */
-
 @media (min-width: 1000px) {
-  .apartment-search__form {
+  .immo-search__form {
     flex-direction: row;
     align-items: center;
     gap: var(--as-spacing-md);
   }
 
-  .apartment-search__switcher {
+  .immo-search__switcher {
     flex-shrink: 0;
     align-self: auto;
   }
 
-  .apartment-search__inputs {
+  .immo-search__inputs {
     flex: 1;
   }
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - DESKTOP OPTIMIZATION
+   1440px+ : Large desktop / 4K
+   Optimized hero height and positioning
    ========================================== */
-
-@media (min-width: 1024px) {
-  .apartment-search-hero {
-    min-height: 400px;
-  }
-}
-
-/* ==========================================
-   RESPONSIVE DESIGN - LARGE DESKTOP
-   ========================================== */
-
 @media (min-width: 1440px) {
-  .apartment-search-hero {
-    min-height: 400px;
+  .immo-search-hero {
+    min-height: 450px;
     background-position: center 40%;
   }
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - MOBILE LANDSCAPE
+   SPECIAL CASE: Mobile landscape orientation
+   Reduced heights for limited vertical space
    ========================================== */
-
 @media (max-width: 767px) and (orientation: landscape) {
-  .apartment-search-hero {
+  .immo-search-hero {
     min-height: 350px;
   }
 
-  .apartment-search__title {
-    font-size: 1.25rem;
+  .immo-search__title {
+    font-size: var(--as-font-size-xl);
     margin-bottom: var(--as-spacing-md);
   }
 }
@@ -732,13 +683,35 @@ body {
    ========================================== */
 
 @media (prefers-reduced-motion: reduce) {
-  .apartment-search__switcher-button,
-  .apartment-search__select,
-  .apartment-search__input,
-  .apartment-search__search-button,
-  .apartment-search__input-icon,
-  .apartment-search__input-dropdown-icon {
+  .immo-search__switcher-button,
+  .immo-search__switcher-indicator,
+  .immo-search__dropdown-trigger,
+  .immo-search__dropdown-list,
+  .immo-search__dropdown-option,
+  .immo-search__dropdown-arrow,
+  .immo-search__input,
+  .immo-search__search-button,
+  .immo-search__input-icon {
     transition: none;
+  }
+
+  /* Disable expensive blur effects for better performance */
+  .immo-search__switcher,
+  .immo-search__dropdown-trigger,
+  .immo-search__input {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ==========================================
+   FALLBACK: Browsers without backdrop-filter support
+   ========================================== */
+@supports not (backdrop-filter: blur(1px)) {
+  .immo-search__switcher,
+  .immo-search__dropdown-trigger,
+  .immo-search__input {
+    background: rgba(80, 80, 80, 0.85);
   }
 }
 
@@ -747,8 +720,8 @@ body {
    ========================================== */
 
 @media (prefers-contrast: more) {
-  .apartment-search__select,
-  .apartment-search__input {
+  .immo-search__input,
+  .immo-search__dropdown-trigger {
     background: var(--as-color-bg-primary);
     color: var(--as-color-text-primary);
     border: 3px solid var(--as-color-text-primary);
@@ -756,27 +729,28 @@ body {
     -webkit-backdrop-filter: none; /* Safari < 15.4 fallback */
   }
 
-  .apartment-search__input::placeholder {
+  .immo-search__input::placeholder {
     color: var(--as-color-text-secondary);
   }
 
-  .apartment-search__input-icon,
-  .apartment-search__input-dropdown-icon {
+  .immo-search__input-icon,
+  .immo-search__dropdown-icon,
+  .immo-search__dropdown-arrow {
     color: var(--as-color-text-primary);
   }
 
-  .apartment-search__switcher {
+  .immo-search__switcher {
     background: var(--as-color-bg-primary);
     border: 2px solid var(--as-color-text-primary);
     backdrop-filter: none;
     -webkit-backdrop-filter: none; /* Safari < 15.4 fallback */
   }
 
-  .apartment-search__switcher-button {
+  .immo-search__switcher-button {
     color: var(--as-color-text-primary);
   }
 
-  .apartment-search__switcher-button--active {
+  .immo-search__switcher-button--active {
     background: var(--as-color-brand-primary);
     color: var(--as-color-text-inverse);
   }

@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apartment Search</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11,26 +10,32 @@
 </head>
 <body>
 <!-- Hero Section with Background Image -->
-<section class="apartment-search-hero">
-    <div class="apartment-search-hero__container">
-        <div class="apartment-search">
-            <h1 class="apartment-search__title">Ihr neues Zuhause finden</h1>
+<section class="immo-search-hero">
+    <div class="immo-search-hero__container">
+        <search class="immo-search">
+            <h1 class="immo-search__title">Ihr neues Zuhause finden</h1>
 
-            <form class="apartment-search__form" id="searchForm">
-                <!-- Transaction Type Switcher -->
-                <div class="apartment-search__switcher" id="switcher">
-                    <span class="apartment-search__switcher-indicator" id="switcherIndicator"></span>
+            <form class="immo-search__form" id="searchForm" aria-label="Immobiliensuche">
+                <!-- Transaction Type Switcher (Tab pattern for accessibility) -->
+                <div class="immo-search__switcher" id="switcher" role="tablist" aria-label="Transaktionsart wählen">
+                    <span class="immo-search__switcher-indicator" id="switcherIndicator" aria-hidden="true"></span>
                     <button
                             type="button"
-                            class="apartment-search__switcher-button apartment-search__switcher-button--active"
+                            role="tab"
+                            class="immo-search__switcher-button immo-search__switcher-button--active"
                             data-value="mieten"
+                            aria-selected="true"
+                            tabindex="0"
                     >
                         Mieten
                     </button>
                     <button
                             type="button"
-                            class="apartment-search__switcher-button"
+                            role="tab"
+                            class="immo-search__switcher-button"
                             data-value="kaufen"
+                            aria-selected="false"
+                            tabindex="-1"
                     >
                         Kaufen
                     </button>
@@ -38,29 +43,30 @@
                 </div>
 
                 <!-- Input Fields -->
-                <div class="apartment-search__inputs">
+                <div class="immo-search__inputs">
                     <!-- Property Type Dropdown -->
-                    <div class="apartment-search__dropdown" id="propertyTypeDropdown">
+                    <div class="immo-search__dropdown" id="propertyTypeDropdown">
                         <button
                                 type="button"
-                                class="apartment-search__dropdown-trigger"
+                                class="immo-search__dropdown-trigger"
                                 id="propertyTypeTrigger"
                                 aria-haspopup="listbox"
                                 aria-expanded="false"
                                 aria-labelledby="propertyTypeLabel"
+                                aria-controls="propertyTypeList"
                         >
-                            <svg class="apartment-search__dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <svg class="immo-search__dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
-                            <span class="apartment-search__dropdown-value" id="propertyTypeValue">Wohnung</span>
-                            <svg class="apartment-search__dropdown-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                            <span class="immo-search__dropdown-value" id="propertyTypeValue">Wohnung</span>
+                            <svg class="immo-search__dropdown-arrow" viewBox="0 0 24 24" aria-hidden="true">
                                 <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                             </svg>
                         </button>
-                        <span id="propertyTypeLabel" class="apartment-search__sr-only">Immobilientyp</span>
+                        <span id="propertyTypeLabel" class="immo-search__sr-only">Immobilientyp</span>
                         <ul
-                                class="apartment-search__dropdown-list"
+                                class="immo-search__dropdown-list"
                                 id="propertyTypeList"
                                 role="listbox"
                                 aria-labelledby="propertyTypeLabel"
@@ -71,41 +77,58 @@
                         <input type="hidden" name="propertyType" id="propertyType" value="wohnung">
                     </div>
 
-                    <!-- Zipcode Input -->
-                    <div class="apartment-search__input-group">
-                        <svg class="apartment-search__input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <!-- Location/Zipcode Input -->
+                    <div class="immo-search__input-group">
+                        <svg class="immo-search__input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <label for="zipCode" class="apartment-search__sr-only">Postleitzahl</label>
+                        <label for="zipCode" class="immo-search__sr-only">Ort oder Postleitzahl</label>
                         <input
                                 type="text"
                                 id="zipCode"
                                 name="zipCode"
-                                class="apartment-search__input"
+                                class="immo-search__input"
                                 placeholder=""
                                 autocomplete="postal-code"
-                                aria-label="Postleitzahl"
+                                aria-describedby="zipCodeError"
                         >
+                        <!-- Live region for error announcements -->
+                        <span id="zipCodeError" class="immo-search__sr-only" role="alert" aria-live="assertive"></span>
                     </div>
 
                     <!-- Search Button -->
-                    <button type="submit" class="apartment-search__search-button">
-                        <svg class="apartment-search__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <button type="submit" class="immo-search__search-button">
+                        <svg class="immo-search__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                        <span class="apartment-search__search-text">Suchen</span>
+                        <span class="immo-search__search-text">Suchen</span>
                     </button>
                 </div>
 
             </form>
-        </div>
+        </search>
     </div>
 </section>
 
 <script>
-  // Property type options for rent and buy with icons
+  /**
+   * Immobilien Search Component JavaScript
+   *
+   * Features:
+   * - Animated tab switcher (Mieten/Kaufen)
+   * - Custom accessible dropdown for property types
+   * - Animated placeholder with typing effect
+   * - Form validation with screen reader announcements
+   *
+   * Accessibility:
+   * - ARIA roles and states for all interactive elements
+   * - Keyboard navigation (Tab, Enter, Arrows, Escape)
+   * - Live region for error announcements
+   */
+
+  // Property type options for rent and buy with icons (SVG path data)
   const propertyOptions = {
     mieten: [
       { value: 'wohnung', label: 'Wohnung', icon: '<rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M9 6h2M13 6h2M9 10h2M13 10h2M9 14h2M13 14h2M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
@@ -132,7 +155,7 @@
     // Switcher elements
     const switcher = document.getElementById('switcher');
     const switcherIndicator = document.getElementById('switcherIndicator');
-    const switcherButtons = document.querySelectorAll('.apartment-search__switcher-button');
+    const switcherButtons = document.querySelectorAll('.immo-search__switcher-button');
     const transactionTypeInput = document.getElementById('transactionType');
 
     // Dropdown elements
@@ -151,11 +174,19 @@
 
     // ========================================
     // SWITCHER FUNCTIONALITY
+    // Implements an animated sliding indicator behind the active tab.
+    // Uses CSS custom properties for smooth transitions.
     // ========================================
 
-    function updateIndicator(activeButton) {
+    /**
+     * Positions the sliding indicator to match the active button.
+     * Calculates offset relative to switcher container, accounting for padding.
+     * @param {HTMLElement} activeButton - The currently active switcher button
+     */
+    function positionIndicator(activeButton) {
       const switcherRect = switcher.getBoundingClientRect();
       const buttonRect = activeButton.getBoundingClientRect();
+      // Subtract 4px (switcher padding) to align indicator with button
       const offset = buttonRect.left - switcherRect.left - 4;
 
       switcher.style.setProperty('--switcher-indicator-width', `${buttonRect.width}px`);
@@ -164,14 +195,14 @@
 
     // Initialize switcher after fonts are loaded to prevent layout shift
     function initSwitcher() {
-      const initialActiveButton = document.querySelector('.apartment-search__switcher-button--active');
+      const initialActiveButton = document.querySelector('.immo-search__switcher-button--active');
       if (initialActiveButton) {
-        updateIndicator(initialActiveButton);
+        positionIndicator(initialActiveButton);
       }
 
       // Enable transitions after initial render (prevents animation on page load)
       requestAnimationFrame(() => {
-        switcher.classList.add('apartment-search__switcher--ready');
+        switcher.classList.add('immo-search__switcher--ready');
       });
     }
 
@@ -185,46 +216,83 @@
     switcherButtons.forEach(button => {
       button.addEventListener('click', function() {
         switcherButtons.forEach(btn => {
-          btn.classList.remove('apartment-search__switcher-button--active');
+          btn.classList.remove('immo-search__switcher-button--active');
+          btn.setAttribute('aria-selected', 'false');
+          btn.setAttribute('tabindex', '-1');
         });
-        this.classList.add('apartment-search__switcher-button--active');
-        updateIndicator(this);
+        this.classList.add('immo-search__switcher-button--active');
+        this.setAttribute('aria-selected', 'true');
+        this.setAttribute('tabindex', '0');
+        positionIndicator(this);
 
         currentTransactionType = this.getAttribute('data-value');
         transactionTypeInput.value = currentTransactionType;
 
         // Update dropdown options
-        populateDropdownOptions(currentTransactionType);
+        renderOptions(currentTransactionType);
+      });
+
+      // Keyboard navigation for tabs (Arrow keys)
+      button.addEventListener('keydown', function(e) {
+        const buttons = Array.from(switcherButtons);
+        const currentIndex = buttons.indexOf(this);
+        let nextIndex;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          nextIndex = (currentIndex + 1) % buttons.length;
+          buttons[nextIndex].click();
+          buttons[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+          buttons[nextIndex].click();
+          buttons[nextIndex].focus();
+        }
       });
     });
 
-    window.addEventListener('resize', () => {
-      const activeButton = document.querySelector('.apartment-search__switcher-button--active');
+    // Debounce utility for performance optimization
+    function debounce(fn, delay) {
+      let timeoutId;
+      return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    // Debounced resize handler to prevent excessive recalculations
+    const handleResize = debounce(() => {
+      const activeButton = document.querySelector('.immo-search__switcher-button--active');
       if (activeButton) {
-        updateIndicator(activeButton);
+        positionIndicator(activeButton);
       }
-    });
+    }, 100);
+
+    window.addEventListener('resize', handleResize, { passive: true });
 
     // ========================================
     // CUSTOM DROPDOWN FUNCTIONALITY
     // ========================================
 
-    function populateDropdownOptions(transactionType) {
+    function renderOptions(transactionType) {
       const options = propertyOptions[transactionType];
       const fragment = document.createDocumentFragment();
 
       options.forEach((option, index) => {
         const li = document.createElement('li');
-        li.className = 'apartment-search__dropdown-option';
+        const optionId = `property-option-${option.value}`;
+        li.id = optionId;
+        li.className = 'immo-search__dropdown-option';
         if (index === 0) {
-          li.className += ' apartment-search__dropdown-option--selected';
+          li.className += ' immo-search__dropdown-option--selected';
         }
         li.setAttribute('role', 'option');
         li.setAttribute('data-value', option.value);
         li.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
 
         li.innerHTML = `
-          <svg class="apartment-search__dropdown-option-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <svg class="immo-search__dropdown-option-icon" viewBox="0 0 24 24" aria-hidden="true">
             ${option.icon}
           </svg>
           <span>${option.label}</span>
@@ -238,10 +306,11 @@
       dropdownList.innerHTML = '';
       dropdownList.appendChild(fragment);
 
-      // Select first option
+      // Select first option and set aria-activedescendant
       const firstOption = options[0];
       dropdownValue.textContent = firstOption.label;
       propertyTypeInput.value = firstOption.value;
+      dropdownTrigger.setAttribute('aria-activedescendant', `property-option-${firstOption.value}`);
     }
 
     function selectOption(option, optionElement) {
@@ -250,33 +319,36 @@
       propertyTypeInput.value = option.value;
 
       // Update selected state
-      const allOptions = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      const allOptions = dropdownList.querySelectorAll('.immo-search__dropdown-option');
       allOptions.forEach(opt => {
-        opt.classList.remove('apartment-search__dropdown-option--selected');
+        opt.classList.remove('immo-search__dropdown-option--selected');
         opt.setAttribute('aria-selected', 'false');
       });
-      optionElement.classList.add('apartment-search__dropdown-option--selected');
+      optionElement.classList.add('immo-search__dropdown-option--selected');
       optionElement.setAttribute('aria-selected', 'true');
+
+      // Update aria-activedescendant for screen readers
+      dropdownTrigger.setAttribute('aria-activedescendant', optionElement.id);
 
       // Close dropdown
       closeDropdown();
     }
 
     function openDropdown() {
-      dropdown.classList.add('apartment-search__dropdown--open');
+      dropdown.classList.add('immo-search__dropdown--open');
       dropdownTrigger.setAttribute('aria-expanded', 'true');
       focusedIndex = -1;
     }
 
     function closeDropdown() {
-      dropdown.classList.remove('apartment-search__dropdown--open');
+      dropdown.classList.remove('immo-search__dropdown--open');
       dropdownTrigger.setAttribute('aria-expanded', 'false');
       focusedIndex = -1;
       clearFocusedOption();
     }
 
     function toggleDropdown() {
-      if (dropdown.classList.contains('apartment-search__dropdown--open')) {
+      if (dropdown.classList.contains('immo-search__dropdown--open')) {
         closeDropdown();
       } else {
         openDropdown();
@@ -284,12 +356,12 @@
     }
 
     function clearFocusedOption() {
-      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
-      options.forEach(opt => opt.classList.remove('apartment-search__dropdown-option--focused'));
+      const options = dropdownList.querySelectorAll('.immo-search__dropdown-option');
+      options.forEach(opt => opt.classList.remove('immo-search__dropdown-option--focused'));
     }
 
     function focusOption(index) {
-      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      const options = dropdownList.querySelectorAll('.immo-search__dropdown-option');
       if (options.length === 0) return;
 
       clearFocusedOption();
@@ -298,20 +370,20 @@
       if (index >= options.length) index = 0;
 
       focusedIndex = index;
-      options[focusedIndex].classList.add('apartment-search__dropdown-option--focused');
+      options[focusedIndex].classList.add('immo-search__dropdown-option--focused');
     }
 
     // Event listeners
     dropdownTrigger.addEventListener('click', toggleDropdown);
 
     dropdownTrigger.addEventListener('keydown', (e) => {
-      const options = dropdownList.querySelectorAll('.apartment-search__dropdown-option');
+      const options = dropdownList.querySelectorAll('.immo-search__dropdown-option');
 
       switch (e.key) {
         case 'Enter':
         case ' ':
           e.preventDefault();
-          if (dropdown.classList.contains('apartment-search__dropdown--open') && focusedIndex >= 0) {
+          if (dropdown.classList.contains('immo-search__dropdown--open') && focusedIndex >= 0) {
             options[focusedIndex].click();
           } else {
             toggleDropdown();
@@ -319,14 +391,14 @@
           break;
         case 'ArrowDown':
           e.preventDefault();
-          if (!dropdown.classList.contains('apartment-search__dropdown--open')) {
+          if (!dropdown.classList.contains('immo-search__dropdown--open')) {
             openDropdown();
           }
           focusOption(focusedIndex + 1);
           break;
         case 'ArrowUp':
           e.preventDefault();
-          if (!dropdown.classList.contains('apartment-search__dropdown--open')) {
+          if (!dropdown.classList.contains('immo-search__dropdown--open')) {
             openDropdown();
           }
           focusOption(focusedIndex - 1);
@@ -350,15 +422,18 @@
     });
 
     // Initialize dropdown
-    populateDropdownOptions('mieten');
+    renderOptions('mieten');
 
     // Enable transitions after initial render (prevents animation on page load)
     requestAnimationFrame(() => {
-      dropdown.classList.add('apartment-search__dropdown--ready');
+      dropdown.classList.add('immo-search__dropdown--ready');
     });
 
     // ========================================
     // TYPING ANIMATION FOR SEARCH INPUT
+    // Creates a typewriter effect in the placeholder text, cycling through
+    // different search terms (Postleitzahl, Stadtteil, Ort).
+    // Stops on focus, restarts on blur if input is empty.
     // ========================================
 
     const baseText = 'Suche nach';
@@ -373,7 +448,7 @@
     const pauseBeforeDelete = 1000;
     const pauseBeforeType = 300;
 
-    function updatePlaceholder() {
+    function animatePlaceholder() {
       if (isTypingStopped) return;
 
       const currentPhrase = typingPhrases[phraseIndex];
@@ -383,43 +458,35 @@
       let nextDelay;
 
       if (!isDeleting) {
-        // Typing
         if (charIndex < currentPhrase.length) {
           charIndex++;
           nextDelay = typingSpeed;
         } else {
-          // Finished typing, pause then start deleting
           isDeleting = true;
           nextDelay = pauseBeforeDelete;
         }
       } else {
-        // Deleting
         if (charIndex > 0) {
           charIndex--;
           nextDelay = deletingSpeed;
         } else {
-          // Finished deleting, move to next phrase
           isDeleting = false;
           phraseIndex = (phraseIndex + 1) % typingPhrases.length;
           nextDelay = pauseBeforeType;
         }
       }
 
-      setTimeout(updatePlaceholder, nextDelay);
+      setTimeout(animatePlaceholder, nextDelay);
     }
 
     // Clear error state on user input
     zipCodeInput.addEventListener('input', function() {
-      if (zipCodeInput.classList.contains('apartment-search__input--error')) {
-        zipCodeInput.classList.remove('apartment-search__input--error');
-        if (errorTypingInterval) {
-          clearInterval(errorTypingInterval);
-          errorTypingInterval = null;
-        }
+      if (zipCodeInput.classList.contains('immo-search__input--error')) {
         // Clear the error message if user starts typing
         if (zipCodeInput.value.startsWith(errorMessage.substring(0, 5))) {
           zipCodeInput.value = '';
         }
+        clearErrorState();
       }
     });
 
@@ -433,7 +500,7 @@
     zipCodeInput.addEventListener('blur', function() {
       if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
         zipCodeInput.value = '';
-        zipCodeInput.classList.remove('apartment-search__input--error');
+        zipCodeInput.classList.remove('immo-search__input--error');
         if (errorTypingInterval) {
           clearInterval(errorTypingInterval);
           errorTypingInterval = null;
@@ -441,12 +508,15 @@
         isTypingStopped = false;
         charIndex = 0;
         isDeleting = false;
-        updatePlaceholder();
+        animatePlaceholder();
       }
     });
 
     // Start the typing animation
-    updatePlaceholder();
+    animatePlaceholder();
+
+    // Error live region element for screen reader announcements
+    const zipCodeError = document.getElementById('zipCodeError');
 
     // Type error message letter by letter
     let errorCharIndex = 0;
@@ -462,6 +532,17 @@
       }
     }
 
+    // Clear error state helper
+    function clearErrorState() {
+      zipCodeInput.classList.remove('immo-search__input--error');
+      zipCodeInput.removeAttribute('aria-invalid');
+      zipCodeError.textContent = '';
+      if (errorTypingInterval) {
+        clearInterval(errorTypingInterval);
+        errorTypingInterval = null;
+      }
+    }
+
     // Form submission
     form.addEventListener('submit', function(e) {
       e.preventDefault();
@@ -469,16 +550,23 @@
       // Validate zipcode
       if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
         isTypingStopped = true;
-        zipCodeInput.classList.add('apartment-search__input--error');
+        zipCodeInput.classList.add('immo-search__input--error');
+        zipCodeInput.setAttribute('aria-invalid', 'true');
         zipCodeInput.focus();
 
-        // Start typing error message
+        // Announce error to screen readers
+        zipCodeError.textContent = errorMessage;
+
+        // Start typing error message visually
         errorCharIndex = 0;
         zipCodeInput.value = '';
         if (errorTypingInterval) clearInterval(errorTypingInterval);
         errorTypingInterval = setInterval(typeErrorMessage, 30);
         return;
       }
+
+      // Clear any previous error state
+      clearErrorState();
 
       // Log form data (in production, you would submit to server)
       console.log('Form submitted:', {

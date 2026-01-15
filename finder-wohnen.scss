@@ -191,6 +191,7 @@ body {
   gap: 4px;
   align-self: flex-start;
   height: var(--as-field-height);
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Sliding background indicator */
@@ -199,14 +200,18 @@ body {
   top: 4px;
   bottom: 4px;
   left: 4px;
-  width: var(--switcher-indicator-width, 50%);
+  width: var(--switcher-indicator-width, 0);
   background: var(--as-color-bg-primary);
   border-radius: calc(var(--as-radius-lg) - 2px);
   box-shadow: var(--as-shadow-sm);
-  transition: transform var(--as-transition-switcher),
-              width var(--as-transition-switcher);
   transform: translateX(var(--switcher-indicator-offset, 0));
   z-index: 0;
+}
+
+/* Only apply transitions after initialization */
+.apartment-search__switcher--ready .apartment-search__switcher-indicator {
+  transition: transform var(--as-transition-switcher),
+              width var(--as-transition-switcher);
 }
 
 .apartment-search__switcher-button {
@@ -226,6 +231,7 @@ body {
   font-size: 1rem;
   min-width: 80px;
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .apartment-search__switcher-button:hover:not(.apartment-search__switcher-button--active) {

@@ -167,6 +167,11 @@
       updateIndicator(initialActiveButton);
     }
 
+    // Enable transitions after initial render (prevents animation on page load)
+    requestAnimationFrame(() => {
+      switcher.classList.add('apartment-search__switcher--ready');
+    });
+
     switcherButtons.forEach(button => {
       button.addEventListener('click', function() {
         switcherButtons.forEach(btn => {

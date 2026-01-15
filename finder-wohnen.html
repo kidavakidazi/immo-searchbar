@@ -83,8 +83,7 @@
                                 id="zipCode"
                                 name="zipCode"
                                 class="apartment-search__input"
-                                placeholder="PLZ eingeben"
-                                inputmode="numeric"
+                                placeholder=""
                                 autocomplete="postal-code"
                                 aria-label="Postleitzahl"
                         >
@@ -100,8 +99,6 @@
                     </button>
                 </div>
 
-                <!-- Error Message -->
-                <div id="formError" class="apartment-search__error" role="alert" aria-live="polite"></div>
             </form>
         </div>
     </div>
@@ -148,7 +145,6 @@
     // Other form elements
     const zipCodeInput = document.getElementById('zipCode');
     const form = document.getElementById('searchForm');
-    const errorDiv = document.getElementById('formError');
 
     let focusedIndex = -1;
     let currentTransactionType = 'mieten';
@@ -334,6 +330,7 @@
     document.addEventListener('click', (e) => {
       if (!dropdown.contains(e.target)) {
         closeDropdown();
+        dropdownTrigger.blur();
       }
     });
 
@@ -345,19 +342,110 @@
       dropdown.classList.add('apartment-search__dropdown--ready');
     });
 
+    // ========================================
+    // TYPING ANIMATION FOR SEARCH INPUT
+    // ========================================
+
+    const baseText = 'Suche nach';
+    const typingPhrases = [' Postleitzahl', ' Stadtteil', ' Ort'];
+    const errorMessage = 'Ort oder PLZ eingeben.';
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isTypingStopped = false;
+    const typingSpeed = 60;
+    const deletingSpeed = 40;
+    const pauseBeforeDelete = 1000;
+    const pauseBeforeType = 300;
+
+    function updatePlaceholder() {
+      if (isTypingStopped) return;
+
+      const currentPhrase = typingPhrases[phraseIndex];
+      const displayText = baseText + currentPhrase.substring(0, charIndex);
+      zipCodeInput.setAttribute('placeholder', displayText);
+
+      let nextDelay;
+
+      if (!isDeleting) {
+        // Typing
+        if (charIndex < currentPhrase.length) {
+          charIndex++;
+          nextDelay = typingSpeed;
+        } else {
+          // Finished typing, pause then start deleting
+          isDeleting = true;
+          nextDelay = pauseBeforeDelete;
+        }
+      } else {
+        // Deleting
+        if (charIndex > 0) {
+          charIndex--;
+          nextDelay = deletingSpeed;
+        } else {
+          // Finished deleting, move to next phrase
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % typingPhrases.length;
+          nextDelay = pauseBeforeType;
+        }
+      }
+
+      setTimeout(updatePlaceholder, nextDelay);
+    }
+
+    // Clear error state on user input
+    zipCodeInput.addEventListener('input', function() {
+      if (zipCodeInput.classList.contains('apartment-search__input--error')) {
+        zipCodeInput.classList.remove('apartment-search__input--error');
+        if (errorTypingInterval) {
+          clearInterval(errorTypingInterval);
+          errorTypingInterval = null;
+        }
+        // Clear the error message if user starts typing
+        if (zipCodeInput.value.startsWith(errorMessage.substring(0, 5))) {
+          zipCodeInput.value = '';
+        }
+      }
+    });
+
+    // Stop placeholder typing animation on focus
+    zipCodeInput.addEventListener('focus', function() {
+      isTypingStopped = true;
+      zipCodeInput.setAttribute('placeholder', '');
+    });
+
+    // Start the typing animation
+    updatePlaceholder();
+
+    // Type error message letter by letter
+    let errorCharIndex = 0;
+    let errorTypingInterval = null;
+
+    function typeErrorMessage() {
+      if (errorCharIndex <= errorMessage.length) {
+        zipCodeInput.value = errorMessage.substring(0, errorCharIndex);
+        errorCharIndex++;
+      } else {
+        clearInterval(errorTypingInterval);
+        errorTypingInterval = null;
+      }
+    }
+
     // Form submission
     form.addEventListener('submit', function(e) {
       e.preventDefault();
 
-      // Clear previous error
-      errorDiv.textContent = '';
-      errorDiv.style.display = 'none';
-
       // Validate zipcode
-      if (!zipCodeInput.value.trim()) {
-        errorDiv.textContent = 'Bitte geben Sie eine Postleitzahl ein.';
-        errorDiv.style.display = 'block';
+      if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
+        isTypingStopped = true;
+        zipCodeInput.classList.add('apartment-search__input--error');
         zipCodeInput.focus();
+
+        // Start typing error message
+        errorCharIndex = 0;
+        zipCodeInput.value = '';
+        if (errorTypingInterval) clearInterval(errorTypingInterval);
+        errorTypingInterval = setInterval(typeErrorMessage, 30);
         return;
       }
 
@@ -368,11 +456,6 @@
         propertyText: dropdownValue.textContent,
         zipCode: zipCodeInput.value
       });
-
-      // Success message (optional)
-      errorDiv.textContent = 'Suche wird durchgeführt...';
-      errorDiv.style.color = 'var(--as-color-brand-primary)';
-      errorDiv.style.display = 'block';
     });
   });
 </script>

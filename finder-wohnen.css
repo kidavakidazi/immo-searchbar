@@ -115,8 +115,17 @@ body {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 var(--as-spacing-md);
 }
 
+/* Center container with calc margin on large screens */
+@media (min-width: 1000px) {
+  .apartment-search-hero__container {
+    margin-left: calc(50% - 31.04rem);
+    margin-right: calc(50% - 31.04rem);
+    max-width: none;
+  }
+}
 /* ==========================================
    APARTMENT SEARCH COMPONENT
    ========================================== */
@@ -126,10 +135,9 @@ body {
 
 .apartment-search__title {
   margin: 0 0 var(--as-spacing-lg) 0;
-  font-size: 1.5rem;
+  font-size: clamp(1.5rem, 1rem + 4vw, 4.5rem);
   font-weight: 700;
   color: var(--as-color-text-inverse);
-  text-align: left;
 }
 
 .apartment-search__form {
@@ -203,7 +211,7 @@ body {
 .apartment-search__inputs {
   display: flex;
   flex-direction: column;
-  gap: var(--as-spacing-sm);
+  gap: var(--as-spacing-md);
 }
 
 .apartment-search__input-group {
@@ -333,10 +341,15 @@ body {
    ========================================== */
 .apartment-search__dropdown {
   position: relative;
-  width: max-content;
+  width: 100%;
   min-width: 230px;
 }
 
+@media (min-width: 768px) {
+  .apartment-search__dropdown {
+    width: max-content;
+  }
+}
 .apartment-search__dropdown-trigger {
   display: flex;
   align-items: center;
@@ -427,6 +440,9 @@ body {
   z-index: 100;
   will-change: opacity, transform;
   contain: layout style;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* Only apply transitions after initialization */
@@ -447,16 +463,11 @@ body {
   gap: var(--as-spacing-sm);
   padding: var(--as-spacing-sm) var(--as-spacing-md);
   padding-left: calc(var(--as-spacing-md) - var(--as-spacing-xs));
-  margin-bottom: 4px;
   border-radius: 12px;
   font-size: 1rem;
   color: var(--as-color-text-primary);
   cursor: pointer;
   transition: background-color var(--as-transition-switcher), color var(--as-transition-switcher);
-}
-
-.apartment-search__dropdown-option:last-child {
-  margin-bottom: 0;
 }
 
 .apartment-search__dropdown-option:hover,
@@ -536,12 +547,6 @@ body {
 
 .apartment-search__search-button:hover {
   background: var(--as-color-brand-primary-hover);
-  box-shadow: var(--as-shadow-md);
-  transform: translateY(-1px);
-}
-
-.apartment-search__search-button:active {
-  transform: translateY(0);
 }
 
 .apartment-search__search-icon {
@@ -553,17 +558,14 @@ body {
 }
 
 /* ==========================================
-   ERROR MESSAGE
+   INPUT ERROR STATE
    ========================================== */
-.apartment-search__error {
-  display: none;
+.apartment-search__input--error {
   color: #dc2626;
-  font-size: 0.875rem;
-  margin-top: var(--as-spacing-xs);
-  padding: var(--as-spacing-sm);
-  background-color: #fee2e2;
-  border-radius: var(--as-radius-sm);
-  border-left: 3px solid #dc2626;
+}
+
+.apartment-search__input--error:focus {
+  color: #dc2626;
 }
 
 /* ==========================================
@@ -582,13 +584,38 @@ body {
 }
 
 /* ==========================================
-   RESPONSIVE DESIGN - TABLET & DESKTOP
+   RESPONSIVE DESIGN - MOBILE (default)
+   ========================================== */
+/* Mobile: stack everything, center title and switcher */
+.apartment-search__title {
+  text-align: center;
+}
+
+.apartment-search__switcher {
+  align-self: center;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN - TABLET (768px+)
    ========================================== */
 @media (min-width: 768px) {
   .apartment-search__title {
-    font-size: 2rem;
     margin-bottom: var(--as-spacing-xl);
   }
+  /* Inputs in a row with search button */
+  .apartment-search__inputs {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .apartment-search__search-button {
+    flex-shrink: 0;
+    padding: 0 var(--as-spacing-xl);
+  }
+}
+/* ==========================================
+   RESPONSIVE DESIGN - DESKTOP (1000px+)
+   ========================================== */
+@media (min-width: 1000px) {
   .apartment-search__form {
     flex-direction: row;
     align-items: center;
@@ -596,16 +623,10 @@ body {
   }
   .apartment-search__switcher {
     flex-shrink: 0;
+    align-self: auto;
   }
   .apartment-search__inputs {
     flex: 1;
-    flex-direction: row;
-    align-items: stretch;
-    gap: var(--as-spacing-sm);
-  }
-  .apartment-search__search-button {
-    flex-shrink: 0;
-    padding: 0 var(--as-spacing-xl);
   }
 }
 /* ==========================================
@@ -614,9 +635,6 @@ body {
 @media (min-width: 1024px) {
   .apartment-search-hero {
     min-height: 400px;
-  }
-  .apartment-search__title {
-    font-size: 2.5rem;
   }
 }
 /* ==========================================
@@ -651,9 +669,6 @@ body {
   .apartment-search__input-icon,
   .apartment-search__input-dropdown-icon {
     transition: none;
-  }
-  .apartment-search__search-button:hover {
-    transform: none;
   }
 }
 /* ==========================================

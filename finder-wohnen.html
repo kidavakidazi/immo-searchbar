@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="finder-wohnen.css">
 </head>
 <body>
-<!-- Hero Section with Background Image -->
 <section class="immo-search-hero">
     <div class="immo-search-hero__container">
         <search class="immo-search">
@@ -42,9 +41,7 @@
                     <input type="hidden" name="transactionType" id="transactionType" value="mieten">
                 </div>
 
-                <!-- Input Fields -->
                 <div class="immo-search__inputs">
-                    <!-- Property Type Dropdown -->
                     <div class="immo-search__dropdown" id="propertyTypeDropdown">
                         <button
                                 type="button"
@@ -97,7 +94,6 @@
                         <span id="zipCodeError" class="immo-search__sr-only" role="alert" aria-live="assertive"></span>
                     </div>
 
-                    <!-- Search Button -->
                     <button type="submit" class="immo-search__search-button">
                         <svg class="immo-search__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -152,20 +148,16 @@
   };
 
   document.addEventListener('DOMContentLoaded', function() {
-    // Switcher elements
     const switcher = document.getElementById('switcher');
-    const switcherIndicator = document.getElementById('switcherIndicator');
     const switcherButtons = document.querySelectorAll('.immo-search__switcher-button');
     const transactionTypeInput = document.getElementById('transactionType');
 
-    // Dropdown elements
     const dropdown = document.getElementById('propertyTypeDropdown');
     const dropdownTrigger = document.getElementById('propertyTypeTrigger');
     const dropdownList = document.getElementById('propertyTypeList');
     const dropdownValue = document.getElementById('propertyTypeValue');
     const propertyTypeInput = document.getElementById('propertyType');
 
-    // Other form elements
     const zipCodeInput = document.getElementById('zipCode');
     const form = document.getElementById('searchForm');
 
@@ -373,7 +365,6 @@
       options[focusedIndex].classList.add('immo-search__dropdown-option--focused');
     }
 
-    // Event listeners
     dropdownTrigger.addEventListener('click', toggleDropdown);
 
     dropdownTrigger.addEventListener('keydown', (e) => {
@@ -568,7 +559,7 @@
       // Clear any previous error state
       clearErrorState();
 
-      // Log form data (in production, you would submit to server)
+      // Log form data into console
       console.log('Form submitted:', {
         transactionType: transactionTypeInput.value,
         propertyType: propertyTypeInput.value,

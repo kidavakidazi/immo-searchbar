@@ -18,6 +18,7 @@
                 <!-- Transaction Type Switcher (Tab pattern for accessibility) -->
                 <div class="immo-search__switcher" id="switcher" role="tablist" aria-label="Transaktionsart wählen">
                     <span class="immo-search__switcher-indicator" id="switcherIndicator" aria-hidden="true"></span>
+
                     <button
                             type="button"
                             role="tab"
@@ -26,7 +27,10 @@
                             aria-selected="true"
                             tabindex="0"
                     >
-                        Mieten
+                        <svg class="immo-search__switcher-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Mieten</span>
                     </button>
                     <button
                             type="button"
@@ -36,7 +40,11 @@
                             aria-selected="false"
                             tabindex="-1"
                     >
-                        Kaufen
+                        <svg class="immo-search__switcher-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 14l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Kaufen</span>
                     </button>
                     <input type="hidden" name="transactionType" id="transactionType" value="mieten">
                 </div>
@@ -86,10 +94,12 @@
                                 id="zipCode"
                                 name="zipCode"
                                 class="immo-search__input"
-                                placeholder=""
+                                placeholder="Suche nach Ort oder PLZ"
                                 autocomplete="postal-code"
                                 aria-describedby="zipCodeError"
                         >
+                        <!-- Ghost text for animated typing hint (hidden from screen readers) -->
+                        <span id="ghostText" class="immo-search__ghost-text" aria-hidden="true"></span>
                         <!-- Live region for error announcements -->
                         <span id="zipCodeError" class="immo-search__sr-only" role="alert" aria-live="assertive"></span>
                     </div>
@@ -421,12 +431,16 @@
     });
 
     // ========================================
-    // TYPING ANIMATION FOR SEARCH INPUT
-    // Creates a typewriter effect in the placeholder text, cycling through
+    // TYPING ANIMATION FOR SEARCH INPUT (Ghost Text Overlay)
+    // Creates a typewriter effect using a ghost text overlay, cycling through
     // different search terms (Postleitzahl, Stadtteil, Ort).
+    // Uses ghost text instead of placeholder for better accessibility:
+    // - Ghost text has aria-hidden="true" so screen readers ignore it
+    // - Static placeholder remains for screen reader users
     // Stops on focus, restarts on blur if input is empty.
     // ========================================
 
+    const ghostText = document.getElementById('ghostText');
     const baseText = 'Suche nach';
     const typingPhrases = [' Postleitzahl', ' Stadtteil', ' Ort'];
     const errorMessage = 'Bitte Ort oder PLZ eingeben.';
@@ -434,17 +448,17 @@
     let charIndex = 0;
     let isDeleting = false;
     let isTypingStopped = false;
-    const typingSpeed = 60;
+    const typingSpeed = 80;
     const deletingSpeed = 40;
-    const pauseBeforeDelete = 1000;
+    const pauseBeforeDelete = 1500;
     const pauseBeforeType = 300;
 
-    function animatePlaceholder() {
+    function animateGhostText() {
       if (isTypingStopped) return;
 
       const currentPhrase = typingPhrases[phraseIndex];
       const displayText = baseText + currentPhrase.substring(0, charIndex);
-      zipCodeInput.setAttribute('placeholder', displayText);
+      ghostText.textContent = displayText;
 
       let nextDelay;
 
@@ -467,11 +481,15 @@
         }
       }
 
-      setTimeout(animatePlaceholder, nextDelay);
+      setTimeout(animateGhostText, nextDelay);
     }
 
     // Clear error state on user input
     zipCodeInput.addEventListener('input', function() {
+      // Hide ghost text when user types
+      if (zipCodeInput.value) {
+        ghostText.style.display = 'none';
+      }
       if (zipCodeInput.classList.contains('immo-search__input--error')) {
         // Clear the error message if user starts typing
         if (zipCodeInput.value.startsWith(errorMessage.substring(0, 5))) {
@@ -481,10 +499,10 @@
       }
     });
 
-    // Stop placeholder typing animation on focus
+    // Stop ghost text typing animation on focus
     zipCodeInput.addEventListener('focus', function() {
       isTypingStopped = true;
-      zipCodeInput.setAttribute('placeholder', '');
+      ghostText.style.display = 'none';
     });
 
     // Restart typing animation on blur if input is empty
@@ -496,15 +514,17 @@
           clearInterval(errorTypingInterval);
           errorTypingInterval = null;
         }
+        // Show ghost text and restart animation
+        ghostText.style.display = '';
         isTypingStopped = false;
         charIndex = 0;
         isDeleting = false;
-        animatePlaceholder();
+        animateGhostText();
       }
     });
 
     // Start the typing animation
-    animatePlaceholder();
+    animateGhostText();
 
     // Error live region element for screen reader announcements
     const zipCodeError = document.getElementById('zipCodeError');

@@ -713,7 +713,7 @@ body {
   /* Error state - bolder and error color, no cursor */
   &--error {
     color: var(--as-color-text-error);
-    font-weight: 600;
+    font-weight: 500;
 
     &::after {
       display: none;

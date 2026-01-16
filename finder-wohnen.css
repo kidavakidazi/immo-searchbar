@@ -667,7 +667,7 @@ body {
 }
 .immo-search__ghost-text--error {
   color: var(--as-color-text-error);
-  font-weight: 600;
+  font-weight: 500;
 }
 .immo-search__ghost-text--error::after {
   display: none;

@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="finder-wohnen.css">
 </head>
 <body>
+<main>
 <section class="immo-search-hero">
     <div class="immo-search-hero__container">
-        <search class="immo-search">
+        <div role="search" class="immo-search">
             <h1 class="immo-search__title">Ihr neues Zuhause finden</h1>
 
             <form class="immo-search__form" id="searchForm" aria-label="Immobiliensuche">
@@ -82,7 +83,7 @@
                         <input type="hidden" name="propertyType" id="propertyType" value="wohnung">
                     </div>
 
-                    <!-- Location/Zipcode Input -->
+                    <!-- Location/Zipcode Input with Combobox pattern -->
                     <div class="immo-search__input-group">
                         <svg class="immo-search__input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -95,13 +96,27 @@
                                 name="zipCode"
                                 class="immo-search__input"
                                 placeholder="Suche nach Ort oder PLZ"
-                                autocomplete="postal-code"
+                                autocomplete="off"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-controls="autocompleteList"
+                                aria-expanded="false"
                                 aria-describedby="zipCodeError"
                         >
-                        <!-- Ghost text for animated typing hint (hidden from screen readers) -->
+                        <!-- Ghost text for animated typing hint / error display -->
                         <span id="ghostText" class="immo-search__ghost-text" aria-hidden="true"></span>
                         <!-- Live region for error announcements -->
                         <span id="zipCodeError" class="immo-search__sr-only" role="alert" aria-live="assertive"></span>
+
+                        <!-- Autocomplete dropdown for location suggestions -->
+                        <ul
+                                class="immo-search__autocomplete-list"
+                                id="autocompleteList"
+                                role="listbox"
+                                aria-label="Ortsvorschläge"
+                        >
+                            <!-- Results populated dynamically -->
+                        </ul>
                     </div>
 
                     <button type="submit" class="immo-search__search-button">
@@ -114,9 +129,10 @@
                 </div>
 
             </form>
-        </search>
+        </div>
     </div>
 </section>
+</main>
 
 <script>
   /**
@@ -490,11 +506,8 @@
       if (zipCodeInput.value) {
         ghostText.style.display = 'none';
       }
-      if (zipCodeInput.classList.contains('immo-search__input--error')) {
-        // Clear the error message if user starts typing
-        if (zipCodeInput.value.startsWith(errorMessage.substring(0, 5))) {
-          zipCodeInput.value = '';
-        }
+      // Clear error state if showing error
+      if (isShowingError || zipCodeInput.classList.contains('immo-search__input--error')) {
         clearErrorState();
       }
     });
@@ -502,18 +515,18 @@
     // Stop ghost text typing animation on focus
     zipCodeInput.addEventListener('focus', function() {
       isTypingStopped = true;
+      // Clear error on focus (user clicked back into the field)
+      if (isShowingError) {
+        clearErrorState();
+      }
       ghostText.style.display = 'none';
     });
 
-    // Restart typing animation on blur if input is empty
+    // Restart typing animation on blur if input is empty (but not when showing error)
     zipCodeInput.addEventListener('blur', function() {
-      if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
+      if (!zipCodeInput.value.trim() && !isShowingError) {
         zipCodeInput.value = '';
-        zipCodeInput.classList.remove('immo-search__input--error');
-        if (errorTypingInterval) {
-          clearInterval(errorTypingInterval);
-          errorTypingInterval = null;
-        }
+        clearErrorState();
         // Show ghost text and restart animation
         ghostText.style.display = '';
         isTypingStopped = false;
@@ -529,13 +542,14 @@
     // Error live region element for screen reader announcements
     const zipCodeError = document.getElementById('zipCodeError');
 
-    // Type error message letter by letter
+    // Type error message letter by letter in ghost text
     let errorCharIndex = 0;
     let errorTypingInterval = null;
+    let isShowingError = false;
 
-    function typeErrorMessage() {
+    function typeErrorMessageInGhost() {
       if (errorCharIndex <= errorMessage.length) {
-        zipCodeInput.value = errorMessage.substring(0, errorCharIndex);
+        ghostText.textContent = errorMessage.substring(0, errorCharIndex);
         errorCharIndex++;
       } else {
         clearInterval(errorTypingInterval);
@@ -546,8 +560,10 @@
     // Clear error state helper
     function clearErrorState() {
       zipCodeInput.classList.remove('immo-search__input--error');
+      ghostText.classList.remove('immo-search__ghost-text--error');
       zipCodeInput.removeAttribute('aria-invalid');
       zipCodeError.textContent = '';
+      isShowingError = false;
       if (errorTypingInterval) {
         clearInterval(errorTypingInterval);
         errorTypingInterval = null;
@@ -559,20 +575,25 @@
       e.preventDefault();
 
       // Validate zipcode
-      if (!zipCodeInput.value.trim() || zipCodeInput.value === errorMessage) {
+      if (!zipCodeInput.value.trim()) {
         isTypingStopped = true;
+        isShowingError = true;
         zipCodeInput.classList.add('immo-search__input--error');
+        ghostText.classList.add('immo-search__ghost-text--error');
         zipCodeInput.setAttribute('aria-invalid', 'true');
-        zipCodeInput.focus();
+
+        // Blur input so ghost text with error is visible
+        // User can click/focus to dismiss error and see placeholder
+        zipCodeInput.blur();
 
         // Announce error to screen readers
         zipCodeError.textContent = errorMessage;
 
-        // Start typing error message visually
+        // Show ghost text and type error message in it
+        ghostText.style.display = '';
         errorCharIndex = 0;
-        zipCodeInput.value = '';
         if (errorTypingInterval) clearInterval(errorTypingInterval);
-        errorTypingInterval = setInterval(typeErrorMessage, 30);
+        errorTypingInterval = setInterval(typeErrorMessageInGhost, 30);
         return;
       }
 
@@ -586,6 +607,215 @@
         propertyText: dropdownValue.textContent,
         zipCode: zipCodeInput.value
       });
+    });
+
+    // ========================================
+    // AUTOCOMPLETE FUNCTIONALITY
+    // Shows location suggestions when user types at least 2 characters.
+    // Displays skeleton loading state before showing results.
+    // ========================================
+
+    const autocompleteList = document.getElementById('autocompleteList');
+    let autocompleteFocusedIndex = -1;
+    let autocompleteTimeout = null;
+    let isAutocompleteOpen = false;
+
+    // Fake German city/district data for autosuggestion
+    const locationData = [
+      { name: 'Berlin', type: 'Stadt', state: 'Berlin' },
+      { name: 'Berlin-Mitte', type: 'Stadtteil', state: 'Berlin' },
+      { name: 'Berlin-Kreuzberg', type: 'Stadtteil', state: 'Berlin' },
+      { name: 'Berlin-Prenzlauer Berg', type: 'Stadtteil', state: 'Berlin' },
+      { name: 'Berlin-Charlottenburg', type: 'Stadtteil', state: 'Berlin' },
+    ];
+
+    function filterLocations(query) {
+      const normalizedQuery = query.toLowerCase().trim();
+      return locationData.filter(location =>
+        location.name.toLowerCase().includes(normalizedQuery)
+      ).slice(0, 6); // Limit to 6 results
+    }
+
+    function showSkeletonLoading() {
+      const skeletonCount = 3;
+      const fragment = document.createDocumentFragment();
+
+      // Status wrapper for loading state announcement
+      const statusWrapper = document.createElement('li');
+      statusWrapper.setAttribute('role', 'status');
+      statusWrapper.setAttribute('aria-live', 'polite');
+      statusWrapper.className = 'immo-search__autocomplete-status';
+
+      const srText = document.createElement('span');
+      srText.className = 'immo-search__sr-only';
+      srText.textContent = 'Lade Vorschläge...';
+      statusWrapper.appendChild(srText);
+
+      for (let i = 0; i < skeletonCount; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'immo-search__autocomplete-skeleton';
+        skeleton.setAttribute('aria-hidden', 'true');
+        skeleton.innerHTML = `
+          <div class="immo-search__autocomplete-skeleton-line"></div>
+          <div class="immo-search__autocomplete-skeleton-line immo-search__autocomplete-skeleton-line--short"></div>
+        `;
+        statusWrapper.appendChild(skeleton);
+      }
+
+      fragment.appendChild(statusWrapper);
+      autocompleteList.innerHTML = '';
+      autocompleteList.appendChild(fragment);
+      openAutocomplete();
+    }
+
+    function renderAutocompleteResults(results) {
+      const fragment = document.createDocumentFragment();
+
+      if (results.length === 0) {
+        const noResults = document.createElement('li');
+        noResults.className = 'immo-search__autocomplete-option';
+        noResults.style.cursor = 'default';
+        noResults.innerHTML = `
+          <span class="immo-search__autocomplete-title">Keine Ergebnisse gefunden</span>
+        `;
+        fragment.appendChild(noResults);
+      } else {
+        results.forEach((location, index) => {
+          const li = document.createElement('li');
+          li.className = 'immo-search__autocomplete-option';
+          li.setAttribute('role', 'option');
+          li.setAttribute('data-value', location.name);
+          li.setAttribute('id', `autocomplete-option-${index}`);
+          li.innerHTML = `
+            <span class="immo-search__autocomplete-title">${location.name}</span>
+            <span class="immo-search__autocomplete-subtitle">${location.type} · ${location.state}</span>
+          `;
+
+          li.addEventListener('click', () => selectAutocompleteOption(location));
+          fragment.appendChild(li);
+        });
+      }
+
+      autocompleteList.innerHTML = '';
+      autocompleteList.appendChild(fragment);
+      autocompleteFocusedIndex = -1;
+    }
+
+    function selectAutocompleteOption(location) {
+      zipCodeInput.value = location.name;
+      closeAutocomplete();
+      zipCodeInput.focus();
+      clearErrorState();
+    }
+
+    function openAutocomplete() {
+      autocompleteList.classList.add('immo-search__autocomplete-list--open');
+      zipCodeInput.setAttribute('aria-expanded', 'true');
+      isAutocompleteOpen = true;
+    }
+
+    function closeAutocomplete() {
+      autocompleteList.classList.remove('immo-search__autocomplete-list--open');
+      zipCodeInput.setAttribute('aria-expanded', 'false');
+      isAutocompleteOpen = false;
+      autocompleteFocusedIndex = -1;
+      clearAutocompleteFocus();
+    }
+
+    function clearAutocompleteFocus() {
+      const options = autocompleteList.querySelectorAll('.immo-search__autocomplete-option');
+      options.forEach(opt => opt.classList.remove('immo-search__autocomplete-option--focused'));
+    }
+
+    function focusAutocompleteOption(index) {
+      const options = autocompleteList.querySelectorAll('.immo-search__autocomplete-option[role="option"]');
+      if (options.length === 0) return;
+
+      clearAutocompleteFocus();
+
+      if (index < 0) index = options.length - 1;
+      if (index >= options.length) index = 0;
+
+      autocompleteFocusedIndex = index;
+      options[autocompleteFocusedIndex].classList.add('immo-search__autocomplete-option--focused');
+      options[autocompleteFocusedIndex].scrollIntoView({ block: 'nearest' });
+      zipCodeInput.setAttribute('aria-activedescendant', options[autocompleteFocusedIndex].id);
+    }
+
+    // Handle input for autocomplete
+    zipCodeInput.addEventListener('input', function() {
+      const query = zipCodeInput.value.trim();
+
+      // Clear any pending timeout
+      if (autocompleteTimeout) {
+        clearTimeout(autocompleteTimeout);
+      }
+
+      // Only show autocomplete for 2+ characters
+      if (query.length < 2) {
+        closeAutocomplete();
+        return;
+      }
+
+      // Show skeleton loading immediately
+      showSkeletonLoading();
+
+      // Simulate network delay, then show results
+      autocompleteTimeout = setTimeout(() => {
+        const results = filterLocations(query);
+        renderAutocompleteResults(results);
+      }, 400);
+    });
+
+    // Keyboard navigation for autocomplete
+    zipCodeInput.addEventListener('keydown', function(e) {
+      if (!isAutocompleteOpen) return;
+
+      const options = autocompleteList.querySelectorAll('.immo-search__autocomplete-option[role="option"]');
+
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          focusAutocompleteOption(autocompleteFocusedIndex + 1);
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          focusAutocompleteOption(autocompleteFocusedIndex - 1);
+          break;
+        case 'Enter':
+          if (autocompleteFocusedIndex >= 0 && options[autocompleteFocusedIndex]) {
+            e.preventDefault();
+            options[autocompleteFocusedIndex].click();
+          }
+          break;
+        case 'Escape':
+          closeAutocomplete();
+          break;
+        case 'Tab':
+          closeAutocomplete();
+          break;
+      }
+    });
+
+    // Close autocomplete on blur (with delay to allow click)
+    zipCodeInput.addEventListener('blur', function() {
+      setTimeout(() => {
+        if (!autocompleteList.contains(document.activeElement)) {
+          closeAutocomplete();
+        }
+      }, 150);
+    });
+
+    // Close autocomplete on click outside
+    document.addEventListener('click', function(e) {
+      if (!zipCodeInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+        closeAutocomplete();
+      }
+    });
+
+    // Enable transitions after initial render
+    requestAnimationFrame(() => {
+      autocompleteList.classList.add('immo-search__autocomplete-list--ready');
     });
   });
 </script>

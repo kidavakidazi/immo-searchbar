@@ -457,6 +457,144 @@ body {
 }
 
 /* ==========================================
+   AUTOCOMPLETE DROPDOWN
+   Similar to dropdown list but for location suggestions
+   ========================================== */
+.immo-search__autocomplete-list {
+  position: absolute;
+  top: calc(100% + var(--as-spacing-xs));
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: var(--as-spacing-xs);
+  list-style: none;
+  background: var(--as-color-bg-primary);
+  border-radius: var(--as-radius-xl);
+  box-shadow: var(--as-shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  z-index: 100;
+  will-change: opacity, transform;
+  contain: layout style;
+  display: flex;
+  flex-direction: column;
+  gap: var(--as-spacing-2xs);
+  max-height: 280px;
+  overflow-y: auto;
+  /* Rounded scrollbar styling - high contrast */
+  scrollbar-width: thin;
+  scrollbar-color: var(--as-color-text-tertiary) transparent;
+}
+.immo-search__autocomplete-list::-webkit-scrollbar {
+  width: 12px;
+}
+.immo-search__autocomplete-list::-webkit-scrollbar-track {
+  background: transparent;
+  margin: var(--as-spacing-sm) 0;
+}
+.immo-search__autocomplete-list::-webkit-scrollbar-thumb {
+  background: var(--as-color-text-tertiary);
+  border-radius: var(--as-radius-xl);
+  border: 3px solid var(--as-color-bg-primary);
+}
+.immo-search__autocomplete-list::-webkit-scrollbar-thumb:hover {
+  background: var(--as-color-text-secondary);
+}
+.immo-search__autocomplete-list {
+  /* Hide scrollbar arrows */
+}
+.immo-search__autocomplete-list::-webkit-scrollbar-button {
+  display: none;
+}
+
+.immo-search__autocomplete-list--ready {
+  transition: opacity var(--as-transition-switcher), transform var(--as-transition-switcher);
+}
+
+.immo-search__autocomplete-list--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Autocomplete Option - Similar to dropdown option but without icon */
+.immo-search__autocomplete-option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--as-spacing-sm) var(--as-spacing-md);
+  border-radius: var(--as-radius-lg);
+  font-size: var(--as-font-size-base);
+  color: var(--as-color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--as-transition-switcher), color var(--as-transition-switcher);
+}
+
+.immo-search__autocomplete-option:hover,
+.immo-search__autocomplete-option--focused {
+  background: var(--as-color-brand-primary);
+  color: var(--as-color-text-inverse);
+}
+
+.immo-search__autocomplete-option:hover .immo-search__autocomplete-subtitle,
+.immo-search__autocomplete-option--focused .immo-search__autocomplete-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.immo-search__autocomplete-title {
+  font-weight: 500;
+}
+
+.immo-search__autocomplete-subtitle {
+  font-size: var(--as-font-size-sm);
+  color: var(--as-color-text-tertiary);
+  transition: color var(--as-transition-switcher);
+}
+
+/* Autocomplete Status wrapper for loading state */
+.immo-search__autocomplete-status {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Skeleton Loading State */
+.immo-search__autocomplete-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--as-spacing-sm) var(--as-spacing-md);
+}
+
+.immo-search__autocomplete-skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, var(--as-color-bg-tertiary) 25%, var(--as-color-bg-secondary) 50%, var(--as-color-bg-tertiary) 75%);
+  background-size: 200% 100%;
+  border-radius: var(--as-radius-sm);
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+.immo-search__autocomplete-skeleton-line--short {
+  width: 60%;
+  height: 14px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+/* Reduced motion: disable shimmer animation */
+@media (prefers-reduced-motion: reduce) {
+  .immo-search__autocomplete-skeleton-line {
+    animation: none;
+    background: var(--as-color-bg-tertiary);
+  }
+}
+/* ==========================================
    TEXT INPUT
    ========================================== */
 .immo-search__input {
@@ -524,6 +662,16 @@ body {
   margin-left: 1px;
   animation: blink-cursor 0.8s step-end infinite;
 }
+.immo-search__ghost-text {
+  /* Error state - bolder and error color, no cursor */
+}
+.immo-search__ghost-text--error {
+  color: var(--as-color-text-error);
+  font-weight: 600;
+}
+.immo-search__ghost-text--error::after {
+  display: none;
+}
 
 /* Blinking cursor animation */
 @keyframes blink-cursor {
@@ -584,6 +732,7 @@ body {
    INPUT ERROR STATE
    ========================================== */
 .immo-search__input--error {
+  background: var(--as-glass-bg-focus);
   color: var(--as-color-text-error);
 }
 
@@ -714,7 +863,9 @@ body {
   .immo-search__dropdown-arrow,
   .immo-search__input,
   .immo-search__search-button,
-  .immo-search__input-icon {
+  .immo-search__input-icon,
+  .immo-search__autocomplete-list,
+  .immo-search__autocomplete-option {
     transition: none;
   }
   /* Disable expensive blur effects for better performance */
